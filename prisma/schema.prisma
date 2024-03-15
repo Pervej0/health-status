@@ -20,12 +20,17 @@ model User {
   password            String    
   role                userRole
   needPasswordChange  Boolean         @default(true)
-  status              String    
-  createdAt           DateTime
-  updatedAt           DateTime
+  status              userStatus      @default(ACTIVE)
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
   admin               Admin?
 
   @@map("users")
+}
+
+enum userStatus {
+  ACTIVE
+  DEACTIVE
 }
 
 enum userRole {
@@ -42,6 +47,5 @@ model Admin{
   profilePhoto  String?
   contactNumber String
   isDeleted     Boolean       @default(false)
-  userId        String
   user          User          @relation(fields: [email], references: [email])
 }
