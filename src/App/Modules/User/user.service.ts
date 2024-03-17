@@ -18,3 +18,8 @@ export const createUserDB = async (payload: any) => {
 
   return result;
 };
+
+export const getAllUserDB = async () => {
+  const result = await prisma.user.findMany();
+  return result;
+};
