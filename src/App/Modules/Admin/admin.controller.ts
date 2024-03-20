@@ -8,6 +8,8 @@ import {
 } from "./admin.service";
 import { pick } from "../../../shared/pick";
 import { paginationOptionItem, selectedQueryItem } from "./admin.constant";
+import sendResponse from "../../../shared/sendResponse";
+import { StatusCodes } from "http-status-codes";
 
 export const getAllAdmin: RequestHandler = async (req, res) => {
   const selectedQuery = pick(req.query, selectedQueryItem);
@@ -15,8 +17,8 @@ export const getAllAdmin: RequestHandler = async (req, res) => {
 
   try {
     const result = await getAllAdminDB(selectedQuery, paginationOption);
-    res.json({
-      success: true,
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
       message: "Users created scuccessfully!",
       meta: result.meta,
       data: result.data,
@@ -33,8 +35,8 @@ export const getAllAdmin: RequestHandler = async (req, res) => {
 export const getSingleAdmin: RequestHandler = async (req, res) => {
   try {
     const result = await getSingleAdminDB(req.params.id);
-    res.status(200).json({
-      success: true,
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
       message: "Admin is retrieved successfully!",
       data: result,
     });
@@ -50,8 +52,9 @@ export const getSingleAdmin: RequestHandler = async (req, res) => {
 export const updateSingleAdmin: RequestHandler = async (req, res) => {
   try {
     const result = await updateSingleAdminDB(req.params.id, req.body);
-    res.status(200).json({
-      success: true,
+
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
       message: "Admin is retrieved successfully!",
       data: result,
     });
@@ -67,8 +70,9 @@ export const updateSingleAdmin: RequestHandler = async (req, res) => {
 export const deleteSingleAdmin: RequestHandler = async (req, res) => {
   try {
     const result = await deleteSingleAdminDB(req.params.id);
-    res.status(200).json({
-      success: true,
+
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
       message: "Admin is deleted successfully!",
       data: result,
     });
@@ -84,8 +88,9 @@ export const deleteSingleAdmin: RequestHandler = async (req, res) => {
 export const softDeleteSingleAdmin: RequestHandler = async (req, res) => {
   try {
     const result = await softDeleteSingleAdminDB(req.params.id);
-    res.status(200).json({
-      success: true,
+
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
       message: "Admin is deleted successfully!",
       data: result,
     });

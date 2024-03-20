@@ -47,7 +47,6 @@ export const getAllAdminDB = async (
   const count = await prisma.admin.count({
     where: whereCondition,
   });
-  console.dir(whereCondition, { depth: "infinity" });
   return {
     meta: {
       page,
@@ -70,7 +69,7 @@ export const getSingleAdminDB = async (id: string) => {
 
 export const updateSingleAdminDB = async (id: string, data: Partial<Admin>) => {
   // check is user valid
-  const isUserExist = await prisma.admin.findUniqueOrThrow({
+  await prisma.admin.findUniqueOrThrow({
     where: { id },
   });
   const updatedValue = await prisma.admin.update({
