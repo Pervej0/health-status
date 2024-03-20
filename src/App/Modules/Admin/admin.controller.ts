@@ -11,7 +11,7 @@ import { paginationOptionItem, selectedQueryItem } from "./admin.constant";
 import sendResponse from "../../../shared/sendResponse";
 import { StatusCodes } from "http-status-codes";
 
-export const getAllAdmin: RequestHandler = async (req, res) => {
+export const getAllAdmin: RequestHandler = async (req, res, next) => {
   const selectedQuery = pick(req.query, selectedQueryItem);
   const paginationOption = pick(req.query, paginationOptionItem);
 
@@ -24,15 +24,11 @@ export const getAllAdmin: RequestHandler = async (req, res) => {
       data: result.data,
     });
   } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: err.message || "Something Went Wrong!",
-      err,
-    });
+    next(err);
   }
 };
 
-export const getSingleAdmin: RequestHandler = async (req, res) => {
+export const getSingleAdmin: RequestHandler = async (req, res, next) => {
   try {
     const result = await getSingleAdminDB(req.params.id);
     sendResponse(res, {
@@ -40,16 +36,12 @@ export const getSingleAdmin: RequestHandler = async (req, res) => {
       message: "Admin is retrieved successfully!",
       data: result,
     });
-  } catch (err: any) {
-    res.status(500).json({
-      success: true,
-      message: err.message || "Something Went wrong!",
-      err: err,
-    });
+  } catch (err) {
+    next(err);
   }
 };
 
-export const updateSingleAdmin: RequestHandler = async (req, res) => {
+export const updateSingleAdmin: RequestHandler = async (req, res, next) => {
   try {
     const result = await updateSingleAdminDB(req.params.id, req.body);
 
@@ -58,16 +50,12 @@ export const updateSingleAdmin: RequestHandler = async (req, res) => {
       message: "Admin is retrieved successfully!",
       data: result,
     });
-  } catch (err: any) {
-    res.status(500).json({
-      success: true,
-      message: err.message || "Something Went wrong!",
-      err: err,
-    });
+  } catch (err) {
+    next(err);
   }
 };
 
-export const deleteSingleAdmin: RequestHandler = async (req, res) => {
+export const deleteSingleAdmin: RequestHandler = async (req, res, next) => {
   try {
     const result = await deleteSingleAdminDB(req.params.id);
 
@@ -76,16 +64,12 @@ export const deleteSingleAdmin: RequestHandler = async (req, res) => {
       message: "Admin is deleted successfully!",
       data: result,
     });
-  } catch (err: any) {
-    res.status(500).json({
-      success: true,
-      message: err.message || "Something Went wrong!",
-      err: err,
-    });
+  } catch (err) {
+    next(err);
   }
 };
 
-export const softDeleteSingleAdmin: RequestHandler = async (req, res) => {
+export const softDeleteSingleAdmin: RequestHandler = async (req, res, next) => {
   try {
     const result = await softDeleteSingleAdminDB(req.params.id);
 
@@ -94,11 +78,7 @@ export const softDeleteSingleAdmin: RequestHandler = async (req, res) => {
       message: "Admin is deleted successfully!",
       data: result,
     });
-  } catch (err: any) {
-    res.status(500).json({
-      success: true,
-      message: err.message || "Something Went wrong!",
-      err: err,
-    });
+  } catch (err) {
+    next(err);
   }
 };

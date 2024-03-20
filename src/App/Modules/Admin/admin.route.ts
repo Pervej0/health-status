@@ -6,6 +6,7 @@ import {
   softDeleteSingleAdmin,
   updateSingleAdmin,
 } from "./admin.controller";
+
 const router = express.Router();
 
 router.get("/", getAllAdmin);
