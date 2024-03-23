@@ -1,7 +1,8 @@
 import express from "express";
-import { loginUser } from "./auth.controller";
+import { getRefreshToken, loginUser } from "./auth.controller";
 const router = express.Router();
 
-router.post("/", loginUser);
+router.post("/login", loginUser);
+router.get("/refresh-token", getRefreshToken);
 
 export const authRoutes = router;

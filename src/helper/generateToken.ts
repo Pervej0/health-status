@@ -7,7 +7,7 @@ const generateToken = (
 ) => {
   const token = jwt.sign(
     {
-      isUserExist: payload.email,
+      email: payload.email,
       role: payload.role,
     },
     secret as string,

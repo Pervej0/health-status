@@ -1,8 +1,10 @@
 import prisma from "../../../shared/prisma";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import config from "../../config";
 import generateToken from "../../../helper/generateToken";
+import jwtValidity from "../../../helper/jwtValidity";
+import { userStatus } from "@prisma/client";
 
 export const loginUserDB = async (payload: {
   email: string;
@@ -20,7 +22,6 @@ export const loginUserDB = async (payload: {
   if (!comparePassword) {
     throw new Error("User dose not exist!");
   }
-  console.log(config.ACCESS_TOKEN_SECRET);
   const tokenPayload = {
     email: isUserExist.email,
     role: isUserExist.role,
@@ -40,5 +41,34 @@ export const loginUserDB = async (payload: {
     needPasswordChange: isUserExist.needPasswordChange,
     refreshToken,
     accessToken,
+  };
+};
+
+export const getRefreshTokenDB = async (token: string) => {
+  const credentials = jwtValidity(
+    token,
+    config.REFRESH_TOKEN_SECRET as string
+  ) as JwtPayload;
+
+  const getUser = await prisma.user.findUniqueOrThrow({
+    where: {
+      email: credentials.email,
+      status: userStatus.ACTIVE,
+    },
+  });
+
+  const tokenPayload = {
+    email: getUser.email,
+    role: getUser.role,
+  };
+  const accessToken = generateToken(
+    tokenPayload,
+    config.ACCESS_TOKEN_SECRET as string,
+    config.ACCESS_TOKEN_EXPIRES_IN as string
+  );
+
+  return {
+    accessToken,
+    needsPasswordChange: getUser.needPasswordChange,
   };
 };
