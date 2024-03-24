@@ -18,7 +18,6 @@ export const loginUser: RequestHandler = asyncCatch(async (req, res) => {
 });
 
 export const getRefreshToken: RequestHandler = asyncCatch(async (req, res) => {
-  console.log(req.cookies);
   const result = await getRefreshTokenDB(req.cookies.refreshToken);
 
   sendResponse(res, {

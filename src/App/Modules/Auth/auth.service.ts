@@ -3,8 +3,8 @@ import bcrypt from "bcrypt";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import config from "../../config";
 import generateToken from "../../../helper/generateToken";
-import jwtValidity from "../../../helper/jwtValidity";
 import { userStatus } from "@prisma/client";
+import decodeToken from "../../../helper/decodeToken";
 
 export const loginUserDB = async (payload: {
   email: string;
@@ -45,7 +45,7 @@ export const loginUserDB = async (payload: {
 };
 
 export const getRefreshTokenDB = async (token: string) => {
-  const credentials = jwtValidity(
+  const credentials = decodeToken(
     token,
     config.REFRESH_TOKEN_SECRET as string
   ) as JwtPayload;
