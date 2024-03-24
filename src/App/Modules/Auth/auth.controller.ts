@@ -2,7 +2,12 @@ import { RequestHandler } from "express";
 import asyncCatch from "../../../shared/asyncCatch";
 import sendResponse from "../../../shared/sendResponse";
 import { StatusCodes } from "http-status-codes";
-import { getRefreshTokenDB, loginUserDB } from "./auth.service";
+import {
+  changePasswordDB,
+  forgetPasswordDB,
+  getRefreshTokenDB,
+  loginUserDB,
+} from "./auth.service";
 
 export const loginUser: RequestHandler = asyncCatch(async (req, res) => {
   const result = await loginUserDB(req.body);
@@ -23,6 +28,27 @@ export const getRefreshToken: RequestHandler = asyncCatch(async (req, res) => {
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     message: "User Accesstoken retrieved successfully!",
+    data: result,
+  });
+});
+
+export const changePassword: RequestHandler = asyncCatch(
+  async (req: any, res) => {
+    const result = await changePasswordDB(req.user, req.body);
+
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      message: "User Password Changed successfully!",
+      data: result,
+    });
+  }
+);
+export const forgetPassword: RequestHandler = asyncCatch(async (req, res) => {
+  const result = await forgetPasswordDB();
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    message: "User Password Changed successfully!",
     data: result,
   });
 });

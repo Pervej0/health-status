@@ -5,6 +5,8 @@ import config from "../../config";
 import generateToken from "../../../helper/generateToken";
 import { userStatus } from "@prisma/client";
 import decodeToken from "../../../helper/decodeToken";
+import CustomError from "../../errors/CustomError";
+import { StatusCodes } from "http-status-codes";
 
 export const loginUserDB = async (payload: {
   email: string;
@@ -20,7 +22,7 @@ export const loginUserDB = async (payload: {
     isUserExist.password
   );
   if (!comparePassword) {
-    throw new Error("User dose not exist!");
+    throw new CustomError(StatusCodes.NOT_FOUND, "User dose not exist!");
   }
   const tokenPayload = {
     email: isUserExist.email,
@@ -36,7 +38,6 @@ export const loginUserDB = async (payload: {
     config.REFRESH_TOKEN_SECRET as string,
     config.REFRESH_TOKEN_EXPIRES_IN as string
   );
-  console.log(accessToken);
   return {
     needPasswordChange: isUserExist.needPasswordChange,
     refreshToken,
@@ -72,3 +73,40 @@ export const getRefreshTokenDB = async (token: string) => {
     needsPasswordChange: getUser.needPasswordChange,
   };
 };
+
+export const changePasswordDB = async (
+  user: JwtPayload,
+  payload: { newPassword: string; oldPassword: string }
+) => {
+  const getUser = await prisma.user.findUniqueOrThrow({
+    where: { email: user.email, status: userStatus.ACTIVE },
+  });
+
+  const comparePassword = await bcrypt.compare(
+    payload.oldPassword,
+    getUser.password
+  );
+
+  if (!comparePassword) {
+    throw new CustomError(StatusCodes.NOT_FOUND, "The password is wrong!");
+  }
+  const hashPassword = await bcrypt.hash(
+    payload.newPassword,
+    Number(config.SALT_ROUND) as number
+  );
+  console.log(hashPassword, "erer");
+
+  await prisma.user.update({
+    where: {
+      email: getUser.email,
+    },
+    data: {
+      password: hashPassword,
+      needPasswordChange: false,
+    },
+  });
+
+  return "updatePassword";
+};
+
+export const forgetPasswordDB = async () => {};
