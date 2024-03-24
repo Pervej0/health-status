@@ -1,8 +1,8 @@
-import jwt from "jsonwebtoken";
+import jwt, { Secret } from "jsonwebtoken";
 
 const generateToken = (
   payload: { email: string; role: string },
-  secret: string,
+  secret: Secret,
   expiresIn: string
 ) => {
   const token = jwt.sign(

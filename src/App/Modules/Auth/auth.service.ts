@@ -1,12 +1,14 @@
 import prisma from "../../../shared/prisma";
 import bcrypt from "bcrypt";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt, { JwtPayload, Secret } from "jsonwebtoken";
 import config from "../../config";
 import generateToken from "../../../helper/generateToken";
 import { userStatus } from "@prisma/client";
 import decodeToken from "../../../helper/decodeToken";
 import CustomError from "../../errors/CustomError";
 import { StatusCodes } from "http-status-codes";
+import transporter from "nodemailer";
+import emailSender from "./emailSender";
 
 export const loginUserDB = async (payload: {
   email: string;
@@ -94,7 +96,6 @@ export const changePasswordDB = async (
     payload.newPassword,
     Number(config.SALT_ROUND) as number
   );
-  console.log(hashPassword, "erer");
 
   await prisma.user.update({
     where: {
@@ -109,4 +110,41 @@ export const changePasswordDB = async (
   return "updatePassword";
 };
 
-export const forgetPasswordDB = async () => {};
+export const forgetPasswordDB = async (user: JwtPayload) => {
+  const getUser = await prisma.user.findUniqueOrThrow({
+    where: {
+      email: user.email,
+      status: userStatus.ACTIVE,
+    },
+  });
+  const tokenPayload = { email: getUser.email, role: getUser.role };
+  const accessToken = generateToken(
+    tokenPayload,
+    config.ACCESS_TOKEN_SECRET as Secret,
+    config.ACCESS_TOKEN_EXPIRES_IN as string
+  );
+
+  const resetPassLink = `${config.LOCAL_URL}?userId=${getUser.id}&&token=${accessToken}`;
+
+  const info = await emailSender.sendMail({
+    from: '"Maddison Foo Koch 👻" <mdparvez222khan@gmail.com>', // sender address
+    to: getUser.email, // list of receivers
+    subject: "Hello ✔", // Subject line
+    text: "Hello world?", // plain text body
+    html: `
+    <div>
+    <p>Dear User,</p>
+    <p>Your password reset link 
+        <a href=${resetPassLink}>
+            <button>
+                Reset Password
+            </button>
+        </a>
+    </p>
+
+</div>
+    `, // html body
+  });
+
+  console.log("Message sent: %s", info.messageId);
+};

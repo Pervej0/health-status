@@ -17,6 +17,10 @@ router.get(
   changePassword
 );
 
-router.get("/forget-password", forgetPassword);
+router.get(
+  "/forget-password",
+  auth(userRole.ADMIN, userRole.DOCTOR, userRole.PATIENT, userRole.SUPER_ADMIN),
+  forgetPassword
+);
 
 export const authRoutes = router;

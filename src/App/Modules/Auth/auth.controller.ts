@@ -43,12 +43,15 @@ export const changePassword: RequestHandler = asyncCatch(
     });
   }
 );
-export const forgetPassword: RequestHandler = asyncCatch(async (req, res) => {
-  const result = await forgetPasswordDB();
 
-  sendResponse(res, {
-    statusCode: StatusCodes.OK,
-    message: "User Password Changed successfully!",
-    data: result,
-  });
-});
+export const forgetPassword: RequestHandler = asyncCatch(
+  async (req: any, res) => {
+    const result = await forgetPasswordDB(req.user);
+
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      message: "To get password link has been sent!",
+      data: result,
+    });
+  }
+);
