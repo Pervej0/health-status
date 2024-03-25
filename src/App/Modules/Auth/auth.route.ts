@@ -1,12 +1,13 @@
 import express from "express";
 import {
   changePassword,
-  forgetPassword,
   getRefreshToken,
   loginUser,
+  resetPassword,
 } from "./auth.controller";
 import auth from "../../middleware/auth";
 import { userRole } from "@prisma/client";
+import { forgetPasswordDB } from "./auth.service";
 const router = express.Router();
 
 router.post("/login", loginUser);
@@ -20,7 +21,12 @@ router.get(
 router.get(
   "/forget-password",
   auth(userRole.ADMIN, userRole.DOCTOR, userRole.PATIENT, userRole.SUPER_ADMIN),
-  forgetPassword
+  forgetPasswordDB
+);
+router.get(
+  "/reset-password",
+  auth(userRole.ADMIN, userRole.DOCTOR, userRole.PATIENT, userRole.SUPER_ADMIN),
+  resetPassword
 );
 
 export const authRoutes = router;

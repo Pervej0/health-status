@@ -118,13 +118,13 @@ export const forgetPasswordDB = async (user: JwtPayload) => {
     },
   });
   const tokenPayload = { email: getUser.email, role: getUser.role };
-  const accessToken = generateToken(
+  const passwordResetToken = generateToken(
     tokenPayload,
     config.ACCESS_TOKEN_SECRET as Secret,
-    config.ACCESS_TOKEN_EXPIRES_IN as string
+    "5m"
   );
 
-  const resetPassLink = `${config.LOCAL_URL}?userId=${getUser.id}&&token=${accessToken}`;
+  const resetPassLink = `${config.LOCAL_URL}?userId=${getUser.id}&&token=${passwordResetToken}`;
 
   const info = await emailSender.sendMail({
     from: '"Maddison Foo Koch 👻" <mdparvez222khan@gmail.com>', // sender address
@@ -133,18 +133,46 @@ export const forgetPasswordDB = async (user: JwtPayload) => {
     text: "Hello world?", // plain text body
     html: `
     <div>
-    <p>Dear User,</p>
-    <p>Your password reset link 
+      <p>Dear User,</p>
+      <p>Your password reset link 
         <a href=${resetPassLink}>
             <button>
                 Reset Password
             </button>
         </a>
-    </p>
-
-</div>
+      </p>
+    </div>
     `, // html body
   });
 
   console.log("Message sent: %s", info.messageId);
+};
+
+export const resetPasswordDB = async (token: string, payload: any) => {
+  await prisma.user.findUniqueOrThrow({
+    where: {
+      id: payload.id,
+      status: userStatus.ACTIVE,
+    },
+  });
+  const verifyToken = decodeToken(token, config.ACCESS_TOKEN_SECRET as Secret);
+  if (!verifyToken) {
+    throw new CustomError(StatusCodes.UNAUTHORIZED, "The user is time out!");
+  }
+
+  const hashPassword = await bcrypt.hash(
+    payload.newPassword,
+    Number(config.SALT_ROUND) as number
+  );
+
+  const updatePassword = await prisma.user.update({
+    where: {
+      id: payload.id,
+    },
+    data: {
+      password: hashPassword,
+    },
+  });
+
+  return updatePassword;
 };

@@ -7,6 +7,7 @@ import {
   forgetPasswordDB,
   getRefreshTokenDB,
   loginUserDB,
+  resetPasswordDB,
 } from "./auth.service";
 
 export const loginUser: RequestHandler = asyncCatch(async (req, res) => {
@@ -44,13 +45,14 @@ export const changePassword: RequestHandler = asyncCatch(
   }
 );
 
-export const forgetPassword: RequestHandler = asyncCatch(
+export const resetPassword: RequestHandler = asyncCatch(
   async (req: any, res) => {
-    const result = await forgetPasswordDB(req.user);
+    const token = req.headers.authorization;
+    const result = await resetPasswordDB(token, req.body);
 
     sendResponse(res, {
       statusCode: StatusCodes.OK,
-      message: "To get password link has been sent!",
+      message: "Password Reset Successfully!",
       data: result,
     });
   }
