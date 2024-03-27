@@ -1,34 +1,22 @@
 import { RequestHandler } from "express";
-import { createUserDB, getAllUserDB } from "./user.service";
+import { createAdminDB, getAllUserDB } from "./user.service";
+import sendResponse from "../../../shared/sendResponse";
+import { StatusCodes } from "http-status-codes";
 
-export const createUser: RequestHandler = async (req, res) => {
-  try {
-    const result = await createUserDB(req.body);
-    res.json({
-      success: true,
-      message: "Users created scuccessfully!",
-      result,
-    });
-  } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: err.message || "Something Went Wrong!",
-    });
-  }
+export const createAdmin: RequestHandler = async (req, res) => {
+  const result = await createAdminDB(req.file, req.body);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    message: "User Created Successfully!!!!!!!!!!!",
+    data: result,
+  });
 };
 
 export const getAllUser: RequestHandler = async (req, res) => {
-  try {
-    const result = await getAllUserDB();
-    res.status(200).json({
-      success: true,
-      message: "Users retrieved scuccessfully!",
-      data: result,
-    });
-  } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: err.message || "Something Went Wrong!",
-    });
-  }
+  const result = await getAllUserDB();
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    message: "Users retrieved scuccessfully!",
+    data: result,
+  });
 };

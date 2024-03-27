@@ -7,9 +7,9 @@ import {
   updateSingleAdmin,
 } from "./admin.controller";
 import validationChecker from "../../../shared/validationChecker";
-import { updateAdminValidationSchema } from "./validation.schema";
 import { userRole } from "@prisma/client";
 import auth from "../../middleware/auth";
+import { updateAdminValidationSchema } from "./Admin.validation.schema";
 
 const router = express.Router();
 

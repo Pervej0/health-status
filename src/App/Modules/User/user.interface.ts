@@ -4,5 +4,6 @@ export type TAdmin = {
     name: string;
     email: string;
     contactNumber: string;
+    profilePhoto?: string;
   };
 };
