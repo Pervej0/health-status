@@ -3,12 +3,17 @@ import { Admin, PrismaClient, userRole } from "@prisma/client";
 import { TAdmin } from "./user.interface";
 import config from "../../config";
 import fileUpload from "../../../shared/fileUpload";
+import { TFile } from "../../interface/uploadFile";
 const prisma = new PrismaClient();
 
-export const createAdminDB = async (file: any, payload: TAdmin) => {
+export const createAdminDB = async (
+  file: TFile | undefined,
+  payload: TAdmin
+) => {
   if (file) {
     const clodUpload = await fileUpload.uploadToCloudinary(file);
     payload.admin.profilePhoto = clodUpload?.secure_url || "";
+    console.log(clodUpload);
   }
   const hashPassword = await bcrypt.hash(
     payload.password,
@@ -21,7 +26,7 @@ export const createAdminDB = async (file: any, payload: TAdmin) => {
   };
 
   const result = await prisma.$transaction(async (tx) => {
-    const createUser = await tx.user.create({ data: user });
+    await tx.user.create({ data: user });
     const createAdmin = await tx.admin.create({ data: payload.admin });
     return createAdmin;
   });

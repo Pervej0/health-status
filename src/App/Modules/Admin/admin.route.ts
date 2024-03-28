@@ -9,7 +9,7 @@ import {
 import validationChecker from "../../../shared/validationChecker";
 import { userRole } from "@prisma/client";
 import auth from "../../middleware/auth";
-import { updateAdminValidationSchema } from "./Admin.validation.schema";
+import { updateAdminValidationSchema } from "./admin.validation.schema";
 
 const router = express.Router();
 
