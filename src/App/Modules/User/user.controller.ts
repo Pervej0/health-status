@@ -34,7 +34,7 @@ export const createAdmin: RequestHandler = asyncCatch(async (req, res) => {
 });
 
 export const changeUserStatus: RequestHandler = asyncCatch(async (req, res) => {
-  const result = await changeUserStatusDB(req.params.id, req.body.status);
+  const result = await changeUserStatusDB(req.params.id, req.body);
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     message: "Users status updated scuccessfully!",

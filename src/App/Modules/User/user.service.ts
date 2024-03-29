@@ -91,18 +91,18 @@ export const getAllUserDB = async (
   };
 };
 
-export const changeUserStatusDB = async (id: string, status: any) => {
+export const changeUserStatusDB = async (id: string, status: userRole) => {
+  console.log(status);
   await prisma.user.findUniqueOrThrow({
     where: { id: id },
   });
 
+  // return;
   const updateUserStatus = await prisma.user.update({
     where: {
       id: id,
     },
-    data: {
-      status: status,
-    },
+    data: status,
   });
 
   return updateUserStatus;
