@@ -1,3 +1,7 @@
-export const selectedQueryItem = ["searchTerm", "name", "email"];
-export const paginationOptionItem = ["page", "limit", "sortBy", "sortOrder"];
-export const searchedFields = ["name", "email"];
+export const selectedQueryItem = [
+  "searchTerm",
+  "name",
+  "email",
+  "contactNumber",
+];
+export const searchedFields = ["name", "email", "contactNumber"];

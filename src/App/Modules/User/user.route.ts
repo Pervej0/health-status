@@ -1,11 +1,13 @@
 import express, { NextFunction, Request, Response } from "express";
-import { createAdmin, getAllUser } from "./user.controller";
+import { changeUserStatus, createAdmin, getAllUser } from "./user.controller";
 import fileUpload from "../../../shared/fileUpload";
 import auth from "../../middleware/auth";
 import { userRole } from "@prisma/client";
 import { AdminValidationSchema } from "./user.validationSchema";
 import validationChecker from "../../../shared/validationChecker";
 const router = express.Router();
+
+router.get("/", auth(userRole.SUPER_ADMIN, userRole.ADMIN), getAllUser);
 
 router.post(
   "/",
@@ -14,10 +16,10 @@ router.post(
   (req: Request, res: Response, next: NextFunction) => {
     const data = AdminValidationSchema.parse(JSON.parse(req.body.data));
     req.body = data;
-    // validationChecker(AdminValidationSchema);
     return createAdmin(req, res, next);
   }
 );
-router.get("/", getAllUser);
+
+router.patch("/:id", changeUserStatus);
 
 export const userRoute = router;

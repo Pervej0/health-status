@@ -10,7 +10,7 @@ export const getAllAdminDB = async (
   const { searchTerm, ...filterData } = query;
   const { page, skip, limit, sortBy, sortOrder } =
     paginationCalculator(options);
-
+  console.log(searchTerm, filterData);
   const andCondition: Prisma.AdminWhereInput[] = [];
   if (searchTerm) {
     andCondition.push({
@@ -22,7 +22,6 @@ export const getAllAdminDB = async (
       })),
     });
   }
-
   //  search on specific field
   if (Object.keys(filterData).length > 0) {
     andCondition.push({
@@ -34,19 +33,29 @@ export const getAllAdminDB = async (
     });
   }
 
+  // andCondition.push({ isDeleted: false });
   const whereCondition: Prisma.AdminWhereInput = { AND: andCondition };
-  const result = await prisma.admin.findMany({
-    where: whereCondition,
+  console.log({
     skip,
     take: limit,
     orderBy: {
       [sortBy as string]: sortOrder,
     },
   });
+  const result = await prisma.admin.findMany({
+    where: whereCondition,
+    skip,
+    take: limit,
+    // orderBy: options.sortBy &&
+    //   options.sortOrder && {
+    //     [options.sortBy as string]: options.sortOrder,
+    //   },
+  });
 
   const count = await prisma.admin.count({
     where: whereCondition,
   });
+
   return {
     meta: {
       page,

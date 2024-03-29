@@ -7,10 +7,11 @@ import {
   updateSingleAdminDB,
 } from "./admin.service";
 import { pick } from "../../../shared/pick";
-import { paginationOptionItem, selectedQueryItem } from "./admin.constant";
+import { selectedQueryItem } from "./admin.constant";
 import sendResponse from "../../../shared/sendResponse";
 import { StatusCodes } from "http-status-codes";
 import asyncCatch from "../../../shared/asyncCatch";
+import { paginationOptionItem } from "../../../helper/paginationHelper";
 
 export const getAllAdmin: RequestHandler = asyncCatch(async (req, res) => {
   const selectedQuery = pick(req.query, selectedQueryItem);
