@@ -3,7 +3,11 @@ import auth from "../../middleware/auth";
 import { userRole } from "@prisma/client";
 import fileUpload from "../../../shared/fileUpload";
 import { specialistValidationSchema } from "./specialist.validationSchema";
-import { createSpecialist, getAllSpecialists } from "./specialist.controller";
+import {
+  createSpecialist,
+  deleteSpecialist,
+  getAllSpecialists,
+} from "./specialist.controller";
 const router = express.Router();
 
 router.get("/", auth(userRole.ADMIN, userRole.SUPER_ADMIN), getAllSpecialists);
@@ -17,6 +21,12 @@ router.post(
     req.body = data;
     return createSpecialist(req, res, next);
   }
+);
+
+router.delete(
+  "/:specialistId",
+  auth(userRole.ADMIN, userRole.SUPER_ADMIN),
+  deleteSpecialist
 );
 
 const specialistRoutes = router;

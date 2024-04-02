@@ -202,7 +202,6 @@ export const updateProfileDB = async (
     },
   });
 
-  // console.log(file, payload);
   if (file) {
     const clodUpload = await fileUpload.uploadToCloudinary(file);
     payload.profilePhoto = clodUpload?.secure_url || "";
@@ -240,7 +239,6 @@ export const updateProfileDB = async (
 };
 
 export const changeUserStatusDB = async (id: string, status: userRole) => {
-  console.log(status);
   await prisma.user.findUniqueOrThrow({
     where: { id: id },
   });

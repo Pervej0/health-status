@@ -22,3 +22,11 @@ export const getAllSpecialistsDB = async () => {
 
   return specialists;
 };
+
+export const deleteSpecialistDB = async (specialistId: string) => {
+  const deleted = await prisma.specialties.delete({
+    where: { id: specialistId },
+  });
+
+  return deleted;
+};
