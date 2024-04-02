@@ -3,7 +3,9 @@ import {
   changeUserStatus,
   createAdmin,
   createDoctor,
+  createPatient,
   getAllUser,
+  getMe,
 } from "./user.controller";
 import fileUpload from "../../../shared/fileUpload";
 import auth from "../../middleware/auth";
@@ -11,11 +13,16 @@ import { userRole } from "@prisma/client";
 import {
   AdminValidationSchema,
   DoctorValidationSchema,
+  patientValidationSchema,
 } from "./user.validationSchema";
-import validationChecker from "../../../shared/validationChecker";
 const router = express.Router();
 
 router.get("/", auth(userRole.SUPER_ADMIN, userRole.ADMIN), getAllUser);
+router.get(
+  "/me",
+  auth(userRole.SUPER_ADMIN, userRole.ADMIN, userRole.DOCTOR, userRole.PATIENT),
+  getMe
+);
 
 router.post(
   "/create-admin",
@@ -35,6 +42,16 @@ router.post(
     const data = DoctorValidationSchema.parse(JSON.parse(req.body.data));
     req.body = data;
     return createDoctor(req, res, next);
+  }
+);
+router.post(
+  "/create-patient",
+  auth(userRole.ADMIN, userRole.SUPER_ADMIN, userRole.PATIENT, userRole.DOCTOR),
+  fileUpload.upload.single("file"),
+  (req: Request, res: Response, next: NextFunction) => {
+    const data = patientValidationSchema.parse(JSON.parse(req.body.data));
+    req.body = data;
+    return createPatient(req, res, next);
   }
 );
 

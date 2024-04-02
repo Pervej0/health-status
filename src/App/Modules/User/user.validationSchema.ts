@@ -34,3 +34,23 @@ export const DoctorValidationSchema = z.object({
     isDeleted: z.boolean().default(false),
   }),
 });
+
+export const patientValidationSchema = z.object({
+  password: z.string({ required_error: "Password is required" }),
+  patient: z.object({
+    email: z
+      .string({
+        required_error: "Email is required!",
+      })
+      .email(),
+    name: z.string({
+      required_error: "Name is required!",
+    }),
+    contactNumber: z.string({
+      required_error: "Contact number is required!",
+    }),
+    address: z.string({
+      required_error: "Address is required",
+    }),
+  }),
+});

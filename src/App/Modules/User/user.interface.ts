@@ -28,3 +28,15 @@ export type TDoctor = {
     isDeleted: boolean;
   };
 };
+
+export type TPatient = {
+  password: string;
+  patient: {
+    email: string;
+    name: "Jane Smith";
+    profilePhoto?: string;
+    contactNumber?: string;
+    address?: string;
+    isDeleted: boolean;
+  };
+};
