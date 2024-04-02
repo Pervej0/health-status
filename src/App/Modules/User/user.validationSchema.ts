@@ -54,3 +54,48 @@ export const patientValidationSchema = z.object({
     }),
   }),
 });
+
+export const updateProfileValidationSchema = z.object({
+  body: z.object({
+    email: z
+      .string({
+        required_error: "Email is required!",
+      })
+      .email()
+      .optional(),
+    name: z
+      .string({
+        required_error: "Name is required!",
+      })
+      .optional(),
+    contactNumber: z
+      .string({
+        required_error: "Contact number is required!",
+      })
+      .optional(),
+    address: z
+      .string({
+        required_error: "Address is required",
+      })
+      .optional(),
+    registrationNumber: z
+      .string({ required_error: "Registration number is required!" })
+      .optional(),
+    experience: z.number().int().default(0).optional(),
+    gender: z.enum([Gender.Female, Gender.Male]).optional(),
+    appointmentFee: z
+      .number({ required_error: "Appointment Fee is required!" })
+      .int()
+      .optional(),
+    qualification: z
+      .string({ required_error: "Qualification is required!" })
+      .optional(),
+    currentWorkingPlace: z
+      .string({
+        required_error: "Current Working Place is required!",
+      })
+      .optional(),
+    designation: z.string({ required_error: "Designation is required!" }),
+    isDeleted: z.boolean().default(false).optional(),
+  }),
+});

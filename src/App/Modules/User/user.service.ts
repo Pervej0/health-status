@@ -1,20 +1,12 @@
 import bcrypt from "bcrypt";
-import {
-  Admin,
-  Doctor,
-  Patient,
-  Prisma,
-  PrismaClient,
-  userRole,
-  userStatus,
-} from "@prisma/client";
+import { Prisma, PrismaClient, userRole, userStatus } from "@prisma/client";
 import { TAdmin, TDoctor, TPatient } from "./user.interface";
 import config from "../../config";
 import fileUpload from "../../../shared/fileUpload";
 import { TFile } from "../../interface/uploadFile";
 import paginationCalculator from "../../../helper/paginationHelper";
 import { searchedFields } from "./user.constant";
-import { JwtPayload } from "jsonwebtoken";
+import { Jwt, JwtPayload } from "jsonwebtoken";
 const prisma = new PrismaClient();
 
 export const createAdminDB = async (
@@ -196,6 +188,55 @@ export const getMeDB = async (user: JwtPayload) => {
     ...userInfo,
     ...profileInfo,
   };
+};
+
+export const updateProfileDB = async (
+  user: JwtPayload,
+  file: TFile,
+  payload: any
+) => {
+  await prisma.user.findFirstOrThrow({
+    where: {
+      email: user.email,
+      status: userStatus.ACTIVE,
+    },
+  });
+
+  // console.log(file, payload);
+  if (file) {
+    const clodUpload = await fileUpload.uploadToCloudinary(file);
+    payload.profilePhoto = clodUpload?.secure_url || "";
+  }
+
+  let updateProfile;
+
+  if (user.role === userRole.SUPER_ADMIN) {
+    updateProfile = await prisma.admin.update({
+      where: { email: user.email },
+      data: payload,
+    });
+  } else if (user.role === userRole.ADMIN) {
+    updateProfile = await prisma.admin.update({
+      where: { email: user.email },
+      data: payload,
+    });
+  } else if (user.role === userRole.DOCTOR) {
+    updateProfile = await prisma.doctor.update({
+      where: {
+        email: user.email,
+      },
+      data: payload,
+    });
+  } else if (user.role === userRole.PATIENT) {
+    updateProfile = await prisma.patient.update({
+      where: {
+        email: user.email,
+      },
+      data: payload,
+    });
+  }
+
+  return updateProfile;
 };
 
 export const changeUserStatusDB = async (id: string, status: userRole) => {

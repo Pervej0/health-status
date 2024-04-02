@@ -6,6 +6,7 @@ import {
   createPatientDB,
   getAllUserDB,
   getMeDB,
+  updateProfileDB,
 } from "./user.service";
 import sendResponse from "../../../shared/sendResponse";
 import { StatusCodes } from "http-status-codes";
@@ -33,10 +34,22 @@ export const getMe: RequestHandler = asyncCatch(async (req: any, res) => {
 
   sendResponse(res, {
     statusCode: StatusCodes.OK,
-    message: "Users retrieved successfully!",
+    message: "Profile retrieved successfully!",
     data: result,
   });
 });
+
+export const updateProfile: RequestHandler = asyncCatch(
+  async (req: any, res) => {
+    const result = await updateProfileDB(req.user, req.file, req.body);
+
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      message: "Profile updated successfully!",
+      data: result,
+    });
+  }
+);
 
 export const createAdmin: RequestHandler = asyncCatch(async (req, res) => {
   const result = await createAdminDB(req.file, req.body);

@@ -6,6 +6,7 @@ import {
   createPatient,
   getAllUser,
   getMe,
+  updateProfile,
 } from "./user.controller";
 import fileUpload from "../../../shared/fileUpload";
 import auth from "../../middleware/auth";
@@ -14,6 +15,7 @@ import {
   AdminValidationSchema,
   DoctorValidationSchema,
   patientValidationSchema,
+  updateProfileValidationSchema,
 } from "./user.validationSchema";
 const router = express.Router();
 
@@ -52,6 +54,17 @@ router.post(
     const data = patientValidationSchema.parse(JSON.parse(req.body.data));
     req.body = data;
     return createPatient(req, res, next);
+  }
+);
+
+router.put(
+  "/me",
+  auth(userRole.ADMIN, userRole.SUPER_ADMIN, userRole.DOCTOR, userRole.PATIENT),
+  fileUpload.upload.single("file"),
+  (req: Request, res: Response, next: NextFunction) => {
+    const data = JSON.parse(req.body.data);
+    req.body = data;
+    return updateProfile(req, res, next);
   }
 );
 
