@@ -66,15 +66,15 @@ export const getAllDoctorDB = async (
   };
 };
 
-// export const getSingleAdminDB = async (id: string) => {
-//   const result = await prisma.admin.findUniqueOrThrow({
-//     where: {
-//       id,
-//     },
-//   });
+export const getSingleDoctorDB = async (id: string) => {
+  const result = await prisma.doctor.findUniqueOrThrow({
+    where: {
+      id,
+    },
+  });
 
-//   return result;
-// };
+  return result;
+};
 
 export const updateSingleDoctorDB = async (
   id: string,
@@ -94,33 +94,35 @@ export const updateSingleDoctorDB = async (
   return updatedValue;
 };
 
-// export const deleteSingleAdminDB = async (id: string) => {
-//   await prisma.$transaction(async (tx) => {
-//     const deletedAdmin = await tx.admin.delete({ where: { id } });
-//     await tx.user.delete({
-//       where: { email: deletedAdmin.email },
-//     });
-//     return deletedAdmin;
-//   });
-// };
+export const deleteSingleDoctorDB = async (id: string) => {
+  await prisma.$transaction(async (tx) => {
+    const deletedDoctor = await tx.doctor.delete({ where: { id } });
+    await tx.user.delete({
+      where: { email: deletedDoctor.email },
+    });
+    return deletedDoctor;
+  });
+};
 
-// export const softDeleteSingleAdminDB = async (id: string) => {
-//   // check is user valid
-//   await prisma.admin.findUniqueOrThrow({
-//     where: { id },
-//   });
+export const softDeleteSingleDoctorDB = async (id: string) => {
+  // check is user valid
+  await prisma.doctor.findUniqueOrThrow({
+    where: { id },
+  });
 
-//   await prisma.$transaction(async (tx) => {
-//     const deletedAdmin = await tx.admin.update({
-//       where: { id },
-//       data: {
-//         isDeleted: true,
-//       },
-//     });
-//     await tx.user.update({
-//       where: { email: deletedAdmin.email },
-//       data: { status: userStatus.DELETED },
-//     });
-//     return deletedAdmin;
-//   });
-// };
+  const result = await prisma.$transaction(async (tx) => {
+    const deletedDoctor = await tx.doctor.update({
+      where: { id },
+      data: {
+        isDeleted: true,
+      },
+    });
+    await tx.user.update({
+      where: { email: deletedDoctor.email },
+      data: { status: userStatus.DELETED },
+    });
+    return deletedDoctor;
+  });
+
+  return result;
+};

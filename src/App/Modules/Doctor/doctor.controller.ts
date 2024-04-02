@@ -5,7 +5,13 @@ import { pick } from "../../../shared/pick";
 import { StatusCodes } from "http-status-codes";
 import { DoctorSelectedQueryItems } from "./doctor.constant";
 import { paginationOptionItem } from "../../../helper/paginationHelper";
-import { getAllDoctorDB, updateSingleDoctorDB } from "./doctor.service";
+import {
+  deleteSingleDoctorDB,
+  getAllDoctorDB,
+  getSingleDoctorDB,
+  softDeleteSingleDoctorDB,
+  updateSingleDoctorDB,
+} from "./doctor.service";
 
 export const getAllDoctor: RequestHandler = asyncCatch(async (req, res) => {
   const selectedQuery = pick(req.query, DoctorSelectedQueryItems);
@@ -14,20 +20,20 @@ export const getAllDoctor: RequestHandler = asyncCatch(async (req, res) => {
   const result = await getAllDoctorDB(selectedQuery, paginationOption);
   sendResponse(res, {
     statusCode: StatusCodes.OK,
-    message: "Doctor retrieved successfully!",
+    message: "Doctors retrieved successfully!",
     meta: result.meta,
     data: result.data,
   });
 });
 
-//   export const getSingleAdmin: RequestHandler = asyncCatch(async (req, res) => {
-//     const result = await getSingleAdminDB(req.params.id);
-//     sendResponse(res, {
-//       statusCode: StatusCodes.OK,
-//       message: "Admin is retrieved successfully!",
-//       data: result,
-//     });
-//   });
+export const getSingleDoctor: RequestHandler = asyncCatch(async (req, res) => {
+  const result = await getSingleDoctorDB(req.params.id);
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    message: "Doctor is retrieved successfully!",
+    data: result,
+  });
+});
 
 export const updateSingleDoctor: RequestHandler = asyncCatch(
   async (req, res) => {
@@ -40,25 +46,25 @@ export const updateSingleDoctor: RequestHandler = asyncCatch(
   }
 );
 
-//   export const deleteSingleAdmin: RequestHandler = asyncCatch(
-//     async (req, res) => {
-//       const result = await deleteSingleAdminDB(req.params.id);
+export const deleteSingleDoctor: RequestHandler = asyncCatch(
+  async (req, res) => {
+    const result = await deleteSingleDoctorDB(req.params.id);
 
-//       sendResponse(res, {
-//         statusCode: StatusCodes.OK,
-//         message: "Admin is deleted successfully!",
-//         data: result,
-//       });
-//     }
-//   );
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      message: "Doctor is deleted successfully!",
+      data: result,
+    });
+  }
+);
 
-//   export const softDeleteSingleAdmin: RequestHandler = asyncCatch(
-//     async (req, res) => {
-//       const result = await softDeleteSingleAdminDB(req.params.id);
-//       sendResponse(res, {
-//         statusCode: StatusCodes.OK,
-//         message: "Admin is deleted successfully!",
-//         data: result,
-//       });
-//     }
-//   );
+export const softDeleteSingleDoctor: RequestHandler = asyncCatch(
+  async (req, res) => {
+    const result = await softDeleteSingleDoctorDB(req.params.id);
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      message: "Doctor is deleted successfully!",
+      data: result,
+    });
+  }
+);
