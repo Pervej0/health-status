@@ -6,7 +6,7 @@ const paginationCalculator = (options: Record<string, unknown>) => {
   const skip = (page - 1) * limit;
   const sortBy = options.sortBy;
   const sortOrder = options.sortOrder;
-
+  console.log(options, "erere");
   return {
     page,
     limit,

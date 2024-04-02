@@ -1,6 +1,6 @@
 import bcrypt from "bcrypt";
 import { Admin, Prisma, PrismaClient, userRole } from "@prisma/client";
-import { TAdmin } from "./user.interface";
+import { TAdmin, TDoctor } from "./user.interface";
 import config from "../../config";
 import fileUpload from "../../../shared/fileUpload";
 import { TFile } from "../../interface/uploadFile";
@@ -15,7 +15,6 @@ export const createAdminDB = async (
   if (file) {
     const clodUpload = await fileUpload.uploadToCloudinary(file);
     payload.admin.profilePhoto = clodUpload?.secure_url || "";
-    console.log(clodUpload);
   }
   const hashPassword = await bcrypt.hash(
     payload.password,
@@ -31,6 +30,34 @@ export const createAdminDB = async (
     await tx.user.create({ data: user });
     const createAdmin = await tx.admin.create({ data: payload.admin });
     return createAdmin;
+  });
+
+  return result;
+};
+
+export const createDoctorDB = async (
+  file: TFile | undefined,
+  payload: TDoctor
+) => {
+  if (file) {
+    const clodUpload = await fileUpload.uploadToCloudinary(file);
+    payload.doctor.profilePhoto = clodUpload?.secure_url || "";
+  }
+
+  const hashPassword = await bcrypt.hash(
+    payload.password,
+    Number(config.SALT_ROUND) as number
+  );
+  const user = {
+    email: payload.doctor.email,
+    password: hashPassword,
+    role: userRole.DOCTOR,
+  };
+
+  const result = await prisma.$transaction(async (tx) => {
+    const createUser = await tx.user.create({ data: user });
+    const createDoctor = await tx.doctor.create({ data: payload.doctor });
+    return createDoctor;
   });
 
   return result;
@@ -55,8 +82,7 @@ export const getAllUserDB = async (
       })),
     });
   }
-
-  //  search on specific field
+  //  filter on specific field
   if (Object.keys(filterData).length > 0) {
     andCondition.push({
       AND: Object.keys(filterData).map((key) => ({

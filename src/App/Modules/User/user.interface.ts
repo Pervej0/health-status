@@ -1,3 +1,5 @@
+import { Gender } from "@prisma/client";
+
 export type TAdmin = {
   password: string;
   admin: {
@@ -5,5 +7,24 @@ export type TAdmin = {
     email: string;
     contactNumber: string;
     profilePhoto?: string;
+  };
+};
+
+export type TDoctor = {
+  password: string;
+  doctor: {
+    name: string;
+    email: string;
+    profilePhoto?: string;
+    contactNumber: string;
+    address?: string | null;
+    registrationNumber: string;
+    experience: number;
+    gender: Gender;
+    appointmentFee: number;
+    qualification: string;
+    currentWorkingPlace: string;
+    designation: string;
+    isDeleted: boolean;
   };
 };
