@@ -70,4 +70,4 @@ router.put(
 
 router.patch("/:id", changeUserStatus);
 
-export const userRoute = router;
+export const userRoutes = router;

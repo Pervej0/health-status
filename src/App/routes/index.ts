@@ -1,17 +1,22 @@
-import exporess from "express";
-import { adminRoute } from "../Modules/Admin/admin.route";
-import { userRoute } from "../Modules/User/user.route";
+import express from "express";
+import { adminRoutes } from "../Modules/Admin/admin.route";
+import { userRoutes } from "../Modules/User/user.route";
 import { authRoutes } from "../Modules/Auth/auth.route";
-const router = exporess.Router();
+import specialistRoutes from "../Modules/Specialist/specialist.route";
+const router = express.Router();
 
 const allRoutes = [
   {
+    path: "/specialists",
+    route: specialistRoutes,
+  },
+  {
     path: "/users",
-    route: userRoute,
+    route: userRoutes,
   },
   {
     path: "/admins",
-    route: adminRoute,
+    route: adminRoutes,
   },
   {
     path: "/auth",

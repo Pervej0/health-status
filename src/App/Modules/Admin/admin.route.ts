@@ -23,4 +23,4 @@ router.patch(
 router.delete("/:id", deleteSingleAdmin);
 router.delete("/soft/:id", softDeleteSingleAdmin);
 
-export const adminRoute = router;
+export const adminRoutes = router;
