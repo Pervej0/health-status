@@ -5,5 +5,6 @@ export const DoctorSelectedQueryItems = [
   "contactNumber",
   "qualification",
   "designation",
+  "specialty",
 ];
 export const DoctorSearchedFields = ["name", "email", "contactNumber"];

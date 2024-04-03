@@ -3,7 +3,7 @@ import { adminRoutes } from "../Modules/Admin/admin.route";
 import { userRoutes } from "../Modules/User/user.route";
 import { authRoutes } from "../Modules/Auth/auth.route";
 import specialistRoutes from "../Modules/Specialist/specialist.route";
-import { doctorRoutes } from "../Modules/Doctor/Doctor.route";
+import { doctorRoutes } from "../Modules/Doctor/doctor.route";
 const router = express.Router();
 
 const allRoutes = [
