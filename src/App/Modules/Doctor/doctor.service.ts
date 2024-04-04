@@ -39,19 +39,35 @@ export const getAllDoctorDB = async (
     });
   }
 
+  //  get doctors by special field
+  // specialties ===  doctor > doctorSpecialty > specialties > title
+  if (specialty) {
+    andCondition.push({
+      doctorSpecialties: {
+        some: {
+          specialties: {
+            title: {
+              contains: specialty as string,
+              mode: "insensitive",
+            },
+          },
+        },
+      },
+    });
+  }
+
   // andCondition.push({ isDeleted: false });
   const whereCondition: Prisma.DoctorWhereInput = { AND: andCondition };
-  console.log({
-    skip,
-    take: limit,
-    orderBy: {
-      [sortBy as string]: sortOrder,
-    },
-  });
+
   const result = await prisma.doctor.findMany({
     where: whereCondition,
     skip,
     take: limit,
+    include: {
+      doctorSpecialties: {
+        include: { specialties: true },
+      },
+    },
     // orderBy: options.sortBy &&
     //   options.sortOrder && {
     //     [options.sortBy as string]: options.sortOrder,
