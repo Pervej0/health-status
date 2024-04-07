@@ -8,7 +8,7 @@ import {
   deleteSpecialistDB,
   getAllSpecialistsDB,
 } from "./specialist.service";
-import { TFile } from "../../interface/uploadFile";
+import { TFile } from "../../interfaces/uploadFile";
 
 export const createSpecialist: RequestHandler = asyncCatch(
   async (req: any, res) => {

@@ -3,7 +3,7 @@ import { Prisma, PrismaClient, userRole, userStatus } from "@prisma/client";
 import { TAdmin, TDoctor, TPatient } from "./user.interface";
 import config from "../../config";
 import fileUpload from "../../../shared/fileUpload";
-import { TFile } from "../../interface/uploadFile";
+import { TFile } from "../../interfaces/uploadFile";
 import paginationCalculator from "../../../helper/paginationHelper";
 import { searchedFields } from "./user.constant";
 import { Jwt, JwtPayload } from "jsonwebtoken";

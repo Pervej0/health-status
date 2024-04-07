@@ -2,7 +2,7 @@ import multer from "multer";
 import path from "path";
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs";
-import { TCloudinaryResponse, TFile } from "../App/interface/uploadFile";
+import { TCloudinaryResponse, TFile } from "../App/interfaces/uploadFile";
 
 cloudinary.config({
   cloud_name: "dvfrp0jxn",

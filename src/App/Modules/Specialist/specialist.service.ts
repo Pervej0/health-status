@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { TFile } from "../../interface/uploadFile";
+import { TFile } from "../../interfaces/uploadFile";
 import { TSpecialist } from "./specialist.interface";
 import fileUpload from "../../../shared/fileUpload";
 const prisma = new PrismaClient();

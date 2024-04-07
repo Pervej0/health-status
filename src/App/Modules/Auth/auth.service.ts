@@ -24,7 +24,7 @@ export const loginUserDB = async (payload: {
     isUserExist.password
   );
   if (!comparePassword) {
-    throw new CustomError(StatusCodes.NOT_FOUND, "User dose not exist!");
+    throw new CustomError(StatusCodes.NOT_FOUND, "Password is not correct!");
   }
   const tokenPayload = {
     email: isUserExist.email,

@@ -28,7 +28,7 @@ export const getRefreshToken: RequestHandler = asyncCatch(async (req, res) => {
 
   sendResponse(res, {
     statusCode: StatusCodes.OK,
-    message: "User Accesstoken retrieved successfully!",
+    message: "User Access token retrieved successfully!",
     data: result,
   });
 });
