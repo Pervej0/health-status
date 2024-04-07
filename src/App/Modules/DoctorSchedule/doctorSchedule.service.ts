@@ -27,19 +27,53 @@ export const getAllDoctorScheduleDB = async (
   query: Record<string, unknown>,
   options: Record<string, unknown>
 ) => {
-  const { ...filterData } = query;
+  const {
+    startDateTime: startTime,
+    endDateTime: endTime,
+    ...filterData
+  } = query;
   const { page, skip, limit, sortBy, sortOrder } =
     paginationCalculator(options);
-  const andCondition = [];
+  const andCondition: object[] = [];
 
   //  field filter
   if (Object.keys(filterData).length > 0) {
+    if (
+      typeof filterData.isBooked === "string" &&
+      filterData.isBooked === "true"
+    ) {
+      filterData.isBooked = true;
+    } else if (
+      typeof filterData.isBooked === "string" &&
+      filterData.isBooked === "false"
+    ) {
+      filterData.isBooked = false;
+    }
+
     andCondition.push({
       AND: Object.keys(filterData).map((key) => ({
         [key]: {
           equals: filterData[key],
         },
       })),
+    });
+  }
+
+  // filter by startDateTime and endDateTime range
+  if (startTime && endTime) {
+    andCondition.push({
+      AND: [
+        {
+          schedule: {
+            startDateTime: { gte: startTime },
+          },
+        },
+        {
+          schedule: {
+            endDateTime: { lte: endTime },
+          },
+        },
+      ],
     });
   }
 
@@ -54,8 +88,6 @@ export const getAllDoctorScheduleDB = async (
     take: limit,
     orderBy: { [sortBy as string]: sortOrder },
   });
-
-  console.dir(whereCondition, { depth: "infinity" });
 
   const count = await prisma.doctorSchedules.count({
     where: whereCondition,
