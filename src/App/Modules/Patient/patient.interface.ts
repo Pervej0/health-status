@@ -34,6 +34,6 @@ export type TPatientUpdate = {
   name: string;
   contactNumber: string;
   address: string;
-  PatientHealthData: TPatientHealthData;
-  MedicalReport: TMedicalReport;
+  patientHealthData: TPatientHealthData;
+  medicalReport: TMedicalReport;
 };

@@ -42,8 +42,8 @@ export const getAllPatientDB = async (
     skip,
     take: limit,
     include: {
-      MedicalReport: true,
-      PatientHealthData: true,
+      medicalReport: true,
+      patientHealthData: true,
     },
     // orderBy: options.sortBy &&
     //   options.sortOrder && {
@@ -79,7 +79,7 @@ export const updateSinglePatientDB = async (
   id: string,
   payload: Partial<TPatientUpdate>
 ) => {
-  const { MedicalReport, PatientHealthData, ...patientData } = payload;
+  const { medicalReport, patientHealthData, ...patientData } = payload;
 
   const patientInfo = await prisma.patient.findUniqueOrThrow({
     where: {
@@ -94,29 +94,29 @@ export const updateSinglePatientDB = async (
       where: { id: patientInfo.id },
       data: patientData,
       include: {
-        MedicalReport: true,
-        PatientHealthData: true,
+        medicalReport: true,
+        patientHealthData: true,
       },
     });
     // update patientHealthData
-    if (PatientHealthData) {
+    if (patientHealthData) {
       await tx.patientHealthData.upsert({
         where: { patientId: patientInfo.id },
-        create: { ...PatientHealthData, patientId: patientInfo.id },
-        update: PatientHealthData,
+        create: { ...patientHealthData, patientId: patientInfo.id },
+        update: patientHealthData,
       });
     }
     // create medical report a patient can have many report
-    if (MedicalReport) {
+    if (medicalReport) {
       await tx.medicalReport.create({
-        data: { ...MedicalReport, patientId: patientInfo.id },
+        data: { ...medicalReport, patientId: patientInfo.id },
       });
     }
   });
 
   const patient = await prisma.patient.findUnique({
     where: { id: patientInfo.id },
-    include: { PatientHealthData: true, MedicalReport: true },
+    include: { patientHealthData: true, medicalReport: true },
   });
 
   return patient;
