@@ -16,13 +16,15 @@ export const createSchedule: RequestHandler = asyncCatch(async (req, res) => {
   });
 });
 
-export const getAllSchedules: RequestHandler = asyncCatch(async (req, res) => {
-  const filter = pick(req.query, scheduleSelectedQueryItems);
-  const paginationOptions = pick(req.query, paginationOptionItem);
-  const result = await getAllSchedulesDB(filter, paginationOptions);
-  sendResponse(res, {
-    statusCode: StatusCodes.OK,
-    message: "Schedules retrieved successfully!",
-    data: result,
-  });
-});
+export const getAllSchedules: RequestHandler = asyncCatch(
+  async (req: any, res) => {
+    const filter = pick(req.query, scheduleSelectedQueryItems);
+    const paginationOptions = pick(req.query, paginationOptionItem);
+    const result = await getAllSchedulesDB(filter, paginationOptions, req.user);
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      message: "Schedules retrieved successfully!",
+      data: result,
+    });
+  }
+);

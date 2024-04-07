@@ -23,7 +23,7 @@ export const createDoctorScheduleDB = async (
   return result;
 };
 
-export const getAllDoctorDB = async (
+export const getAllDoctorScheduleDB = async (
   query: Record<string, unknown>,
   options: Record<string, unknown>
 ) => {
@@ -44,20 +44,20 @@ export const getAllDoctorDB = async (
   }
 
   // andCondition.push({ isDeleted: false });
-  const whereCondition: Prisma.ScheduleWhereInput = { AND: andCondition };
+  const whereCondition: Prisma.DoctorSchedulesWhereInput = {
+    AND: andCondition,
+  };
 
-  const result = await prisma.schedule.findMany({
+  const result = await prisma.doctorSchedules.findMany({
     where: whereCondition,
     skip,
     take: limit,
-
-    // orderBy: options.sortBy &&
-    //   options.sortOrder && {
-    //     [options.sortBy as string]: options.sortOrder,
-    //   },
+    orderBy: { [sortBy as string]: sortOrder },
   });
 
-  const count = await prisma.schedule.count({
+  console.dir(whereCondition, { depth: "infinity" });
+
+  const count = await prisma.doctorSchedules.count({
     where: whereCondition,
   });
 
