@@ -5,6 +5,8 @@ import { addHours, addMinutes, format } from "date-fns";
 import prisma from "../../../shared/prisma";
 import paginationCalculator from "../../../helper/paginationHelper";
 import { TAuthUser } from "../../interfaces/global";
+import CustomError from "../../errors/CustomError";
+import { StatusCodes } from "http-status-codes";
 
 export const createScheduleDB = async (payload: TSchedule) => {
   const { startDate, endDate, startTime, endTime } = payload;
@@ -143,4 +145,31 @@ export const getAllSchedulesDB = async (
     },
     data: result,
   };
+};
+
+export const getSingleScheduleDB = async (scheduleId: string) => {
+  const result = await prisma.schedule.findFirst({
+    where: { id: scheduleId },
+  });
+
+  return result;
+};
+
+export const deleteScheduleDB = async (scheduleId: string) => {
+  const schedule = await prisma.schedule.findFirst({
+    where: { id: scheduleId, doctorSchedules: { some: { scheduleId } } },
+  });
+
+  if (schedule) {
+    throw new CustomError(
+      StatusCodes.BAD_REQUEST,
+      "Schedule Already taken by doctor!"
+    );
+  }
+
+  const result = await prisma.schedule.delete({
+    where: { id: scheduleId },
+  });
+
+  return result;
 };
