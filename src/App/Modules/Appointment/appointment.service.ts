@@ -132,3 +132,50 @@ export const getMyAppointmentDB = async (
     data: result,
   };
 };
+
+export const getAllAppointmentDB = async (
+  query: Record<string, unknown>,
+  option: Record<string, string>,
+  user: TAuthUser
+) => {
+  const andConditions = [];
+  const { page, limit, skip, sortOrder, sortBy } = paginationCalculator(option);
+  // filter by specific field
+  if (Object.keys(query).length > 0) {
+    andConditions.push({
+      AND: Object.keys(query).map((key) => ({
+        [key]: { equals: query[key] },
+      })),
+    });
+  }
+
+  const whereCondition: Prisma.AppointmentWhereInput = { AND: andConditions };
+
+  const result = await prisma.appointment.findMany({
+    where: whereCondition,
+    include: {
+      patient: true,
+      doctor: true,
+      schedule: true,
+    },
+    skip,
+    take: limit,
+    orderBy:
+      sortBy && sortOrder
+        ? { [sortBy as string]: sortOrder }
+        : {
+            createdAt: "desc",
+          },
+  });
+
+  const count = await prisma.appointment.count({ where: whereCondition });
+
+  return {
+    meta: {
+      page,
+      limit,
+      total: count,
+    },
+    data: result,
+  };
+};
