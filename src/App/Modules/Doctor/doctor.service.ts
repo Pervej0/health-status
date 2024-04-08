@@ -16,7 +16,7 @@ export const getAllDoctorDB = async (
   const { searchTerm, specialty, ...filterData } = query;
   const { page, skip, limit, sortBy, sortOrder } =
     paginationCalculator(options);
-  console.log(specialty, "x");
+
   const andCondition: Prisma.DoctorWhereInput[] = [];
   if (searchTerm) {
     andCondition.push({
@@ -28,7 +28,7 @@ export const getAllDoctorDB = async (
       })),
     });
   }
-  //  search on specific field
+  //  filter on specific field
   if (Object.keys(filterData).length > 0) {
     andCondition.push({
       AND: Object.keys(filterData).map((key) => ({
@@ -68,10 +68,12 @@ export const getAllDoctorDB = async (
         include: { specialties: true },
       },
     },
-    // orderBy: options.sortBy &&
-    //   options.sortOrder && {
-    //     [options.sortBy as string]: options.sortOrder,
-    //   },
+    orderBy:
+      sortBy && sortOrder
+        ? { [sortBy as string]: sortOrder }
+        : {
+            createdAt: "desc",
+          },
   });
 
   const count = await prisma.doctor.count({

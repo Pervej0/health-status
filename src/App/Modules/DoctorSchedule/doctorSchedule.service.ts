@@ -171,7 +171,6 @@ export const getAllDoctorScheduleDB = async (
       },
     });
   }
-
   //  field filter
   if (Object.keys(filterData).length > 0) {
     if (
