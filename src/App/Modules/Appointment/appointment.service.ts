@@ -34,10 +34,15 @@ export const createAppointmentDB = async (
   const result = await prisma.$transaction(async (tx) => {
     const createAppointment = await tx.appointment.create({
       data: payload as any,
+      include: {
+        patient: true,
+        doctor: true,
+        schedule: true,
+      },
     });
 
     // update doctor schedule
-    await prisma.doctorSchedules.update({
+    await tx.doctorSchedules.update({
       where: {
         doctorId_scheduleId: {
           doctorId: doctor.id,
@@ -47,6 +52,17 @@ export const createAppointmentDB = async (
       data: {
         isBooked: true,
         appointmentId: createAppointment.id,
+      },
+    });
+
+    // payment
+    const today = new Date();
+    const transactionId = `hc-${today.getFullYear()}-${today.getDay()}-${today.getHours()}-${today.getMinutes()}-${today.getMilliseconds()}`;
+    await tx.payment.create({
+      data: {
+        appointmentId: createAppointment.id,
+        amount: doctor.appointmentFee,
+        transactionId,
       },
     });
 

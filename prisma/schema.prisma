@@ -202,16 +202,17 @@ model DoctorSchedules {
 model Appointment {
   id             String            @id @default(uuid())
   patientId      String
-  patient        Patient           @relation(fields: [patientId], references: [id])
+  patient        Patient           @relation(fields: [patientId], references: [id], onDelete: Cascade)
   doctorId       String
-  doctor         Doctor            @relation(fields: [doctorId], references: [id])
+  doctor         Doctor            @relation(fields: [doctorId], references: [id], onDelete: Cascade)
   scheduleId     String            @unique
-  schedule       Schedule          @relation(fields: [scheduleId], references: [id])
+  schedule       Schedule          @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
   videoCallingId String
   status         appointmentStatus @default(SCHEDULED)
   paymentStatus  paymentStatus     @default(UNPAID)
   createdAt      DateTime          @default(now())
   updatedAt      DateTime          @updatedAt
+  payment        Payment?
 
   @@map("appointments")
 }
@@ -226,4 +227,18 @@ enum appointmentStatus {
 enum paymentStatus {
   PAID
   UNPAID
+}
+
+model Payment {
+  id                 String        @id @default(uuid())
+  appointmentId      String        @unique
+  appointment        Appointment   @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  amount             Float
+  transactionId      String        @unique
+  status             paymentStatus @default(UNPAID)
+  paymentGatewayData Json?
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  @@map("payments")
 }
