@@ -15,4 +15,11 @@ export default {
   LOCAL_URL: process.env.LOCAL_URL,
   EMAIL: process.env.EMAIL,
   PASSWORD: process.env.PASSWORD,
+  STORE_ID: process.env.STORE_ID,
+  STORE_PASSWORD: process.env.STORE_PASSWORD,
+  SUCCESS_URL: process.env.SUCCESS_URL,
+  FAIL_URL: process.env.FAIL_URL,
+  CANCEL_URL: process.env.CANCEL_URL,
+  IPN_URL: process.env.IPN_URL,
+  SSL_URL: process.env.SSL_URL,
 };
