@@ -1,8 +1,15 @@
-import { Appointment, Prisma, userRole } from "@prisma/client";
+import {
+  Appointment,
+  Prisma,
+  appointmentStatus,
+  userRole,
+} from "@prisma/client";
 import { TAuthUser } from "../../interfaces/global";
 import prisma from "../../../shared/prisma";
 import { v4 as uuidv4 } from "uuid";
 import paginationCalculator from "../../../helper/paginationHelper";
+import CustomError from "../../errors/CustomError";
+import { StatusCodes } from "http-status-codes";
 
 export const createAppointmentDB = async (
   user: TAuthUser,
@@ -178,4 +185,34 @@ export const getAllAppointmentDB = async (
     },
     data: result,
   };
+};
+
+export const updateAppointmentStatusDB = async (
+  id: string,
+  payload: { status: appointmentStatus },
+  user: TAuthUser
+) => {
+  const appointment = await prisma.appointment.findUniqueOrThrow({
+    where: { id },
+    include: { doctor: true },
+  });
+
+  if (
+    user?.role === userRole.DOCTOR &&
+    user.email !== appointment.doctor.email
+  ) {
+    throw new CustomError(
+      StatusCodes.FORBIDDEN,
+      "This is not your appointment"
+    );
+  }
+
+  const update = await prisma.appointment.update({
+    where: { id },
+    data: {
+      status: payload.status,
+    },
+  });
+
+  return update;
 };

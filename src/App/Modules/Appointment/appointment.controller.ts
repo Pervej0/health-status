@@ -7,6 +7,7 @@ import {
   createAppointmentDB,
   getAllAppointmentDB,
   getMyAppointmentDB,
+  updateAppointmentStatusDB,
 } from "./appointment.service";
 import { pick } from "../../../shared/pick";
 import { AppointmentSelectedQueryItems } from "./appointment.constant";
@@ -34,6 +35,19 @@ export const getMyAppointment: RequestHandler = asyncCatch(
       message: "Appointment fetched successfully!",
       meta: result.meta,
       data: result.data,
+    });
+  }
+);
+
+export const updateAppointmentStatus: RequestHandler = asyncCatch(
+  async (req: any, res) => {
+    const id = req.params.appointmentId;
+    const data = req.body;
+    const result = await updateAppointmentStatusDB(id, data, req.user);
+    sendResponse(res, {
+      statusCode: StatusCodes.OK,
+      message: "Appointments updated successfully!",
+      data: result,
     });
   }
 );

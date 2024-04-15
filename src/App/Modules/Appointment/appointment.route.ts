@@ -5,6 +5,7 @@ import {
   createAppointment,
   getAllAppointment,
   getMyAppointment,
+  updateAppointmentStatus,
 } from "./appointment.controller";
 import validationChecker from "../../../shared/validationChecker";
 import { appointmentValidationSchema } from "./appointment.validationSchema";
@@ -22,6 +23,11 @@ router.post(
   validationChecker(appointmentValidationSchema),
   auth(userRole.PATIENT),
   createAppointment
+);
+router.patch(
+  "/status/:appointmentId",
+  auth(userRole.ADMIN, userRole.SUPER_ADMIN, userRole.DOCTOR),
+  updateAppointmentStatus
 );
 
 export const appointmentRoutes = router;
