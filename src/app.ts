@@ -4,6 +4,8 @@ import globalErrorHandler from "./App/middleware/globalErrorHandler";
 import { RootRoute } from "./App/routes";
 import { notFound } from "./App/middleware/notFound";
 import cookieParser from "cookie-parser";
+import { deleteUnPaidAppointmentDB } from "./App/Modules/Appointment/appointment.service";
+import cron from "node-cron";
 const app = express();
 
 app.use(cors());
@@ -12,6 +14,15 @@ app.use(cookieParser());
 
 app.use("/api/v1", RootRoute);
 app.use(globalErrorHandler);
+
+// cancel appointment after 30minutes
+cron.schedule("* * * * *", () => {
+  try {
+    deleteUnPaidAppointmentDB();
+  } catch (err) {
+    console.log(err);
+  }
+});
 
 app.get("/", (req: Request, res: Response) => {
   res.send({

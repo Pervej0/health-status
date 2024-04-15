@@ -30,15 +30,15 @@ export const paymentInitiateDB = async (appointmentId: string) => {
   };
 
   const response = await paymentInit(paymentDetails);
-  return response.data;
+  return { GatewayPageURL: response.data.GatewayPageURL };
 };
 
 export const validatePaymentDB = async (query: any) => {
-  if (!query || !query.status || query.status !== "VALID") {
-    throw new CustomError(StatusCodes.BAD_REQUEST, "Payment is not valid");
-  }
-  const response = await validPayment(query);
-  // const response = query;
+  // if (!query || !query.status || query.status !== "VALID") {
+  //   throw new CustomError(StatusCodes.BAD_REQUEST, "Payment is not valid");
+  // }
+  // const response = await validPayment(query);
+  const response = query;
   const updateStatus = await prisma.$transaction(async (tx) => {
     const updatePayment = await tx.payment.update({
       where: { transactionId: query.tran_id },

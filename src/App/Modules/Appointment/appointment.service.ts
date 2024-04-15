@@ -2,6 +2,7 @@ import {
   Appointment,
   Prisma,
   appointmentStatus,
+  paymentStatus,
   userRole,
 } from "@prisma/client";
 import { TAuthUser } from "../../interfaces/global";
@@ -215,4 +216,50 @@ export const updateAppointmentStatusDB = async (
   });
 
   return update;
+};
+
+export const deleteUnPaidAppointmentDB = async () => {
+  const appointmentDeletedTime = 2; // after 30minutes appointment will be deleted
+  const thirtyMinAgo = new Date(
+    Date.now() - appointmentDeletedTime * 60 * 1000
+  );
+  const appointmentIds = await prisma.appointment.findMany({
+    where: {
+      createdAt: { lte: thirtyMinAgo },
+      paymentStatus: paymentStatus.UNPAID,
+    },
+  });
+  const unPaidAppointmentIds = appointmentIds.map(
+    (appointment) => appointment.id
+  );
+
+  const result = await prisma.$transaction(async (tx) => {
+    await tx.payment.deleteMany({
+      where: {
+        appointmentId: {
+          in: unPaidAppointmentIds,
+        },
+      },
+    });
+
+    await tx.appointment.deleteMany({
+      where: {
+        id: {
+          in: unPaidAppointmentIds,
+        },
+      },
+    });
+
+    for (const appointment of appointmentIds) {
+      await prisma.doctorSchedules.updateMany({
+        where: {
+          doctorId: appointment.doctorId,
+          scheduleId: appointment.scheduleId,
+        },
+        data: {
+          isBooked: false,
+        },
+      });
+    }
+  });
 };
