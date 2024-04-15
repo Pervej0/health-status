@@ -1,6 +1,10 @@
 import axios from "axios";
 import prisma from "../../../shared/prisma";
 import config from "../../config";
+import { paymentInit, validPayment } from "../SSL/ssl.service";
+import CustomError from "../../errors/CustomError";
+import { StatusCodes } from "http-status-codes";
+import { paymentStatus } from "@prisma/client";
 
 export const paymentInitiateDB = async (appointmentId: string) => {
   const appointmentPayment = await prisma.payment.findUniqueOrThrow({
@@ -16,46 +20,40 @@ export const paymentInitiateDB = async (appointmentId: string) => {
     },
   });
 
-  const data = await {
-    store_id: config.STORE_ID,
-    store_passwd: config.STORE_PASSWORD,
-    total_amount: appointmentPayment.amount,
-    currency: "BDT",
-    tran_id: appointmentPayment.transactionId, // use unique tran_id for each api call
-    success_url: config.SUCCESS_URL,
-    fail_url: config.FAIL_URL,
-    cancel_url: config.CANCEL_URL,
-    ipn_url: "http://localhost:3030/ipn",
-    shipping_method: "N/A",
-    product_name: "Appointment",
-    product_category: "Service",
-    product_profile: "general",
-    cus_name: appointmentPayment.appointment.patient.name,
-    cus_email: appointmentPayment.appointment.patient.email,
-    cus_add1: appointmentPayment.appointment.patient.address,
-    cus_add2: "N/A",
-    cus_city: "Dhaka",
-    cus_state: "Dhaka",
-    cus_postcode: "1000",
-    cus_country: "Bangladesh",
-    cus_phone: appointmentPayment.appointment.patient.contactNumber,
-    cus_fax: "01711111111",
-    ship_name: "N/A",
-    ship_add1: "N/A",
-    ship_add2: "N/A",
-    ship_city: "N/A",
-    ship_state: "N/A",
-    ship_postcode: 1000,
-    ship_country: "N/A",
+  const paymentDetails = {
+    name: appointmentPayment.appointment.patient.name,
+    amount: appointmentPayment.amount,
+    transactionId: appointmentPayment.transactionId, // use unique tran_id for each api call
+    email: appointmentPayment.appointment.patient.email,
+    address: appointmentPayment.appointment.patient.address,
+    contactNumber: appointmentPayment.appointment.patient.contactNumber,
   };
-  console.log(data);
 
-  const response = await axios({
-    method: "post",
-    url: config.SSL_URL,
-    data: data,
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+  const response = await paymentInit(paymentDetails);
+  return response.data;
+};
+
+export const validatePaymentDB = async (query: any) => {
+  if (!query || !query.status || query.status !== "VALID") {
+    throw new CustomError(StatusCodes.BAD_REQUEST, "Payment is not valid");
+  }
+  const response = await validPayment(query);
+  // const response = query;
+  const updateStatus = await prisma.$transaction(async (tx) => {
+    const updatePayment = await tx.payment.update({
+      where: { transactionId: query.tran_id },
+      data: { status: paymentStatus.PAID, paymentGatewayData: response },
+    });
+
+    await tx.appointment.update({
+      where: { id: updatePayment.appointmentId },
+      data: {
+        paymentStatus: paymentStatus.PAID,
+      },
+    });
+
+    return { message: "Payment success!" };
   });
 
-  return response.data;
+  return updateStatus;
 };

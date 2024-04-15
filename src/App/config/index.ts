@@ -22,4 +22,5 @@ export default {
   CANCEL_URL: process.env.CANCEL_URL,
   IPN_URL: process.env.IPN_URL,
   SSL_URL: process.env.SSL_URL,
+  PAYMENT_VALIDATION: process.env.PAYMENT_VALIDATION,
 };
