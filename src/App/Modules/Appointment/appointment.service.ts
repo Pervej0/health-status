@@ -219,7 +219,7 @@ export const updateAppointmentStatusDB = async (
 };
 
 export const deleteUnPaidAppointmentDB = async () => {
-  const appointmentDeletedTime = 2; // after 30minutes appointment will be deleted
+  const appointmentDeletedTime = 30; // after 30minutes appointment will be deleted
   const thirtyMinAgo = new Date(
     Date.now() - appointmentDeletedTime * 60 * 1000
   );
