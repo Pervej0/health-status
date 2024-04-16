@@ -1,1 +1,1 @@
-export const prescriptionSearchedFields = ["doctorEmail", "patientEmail"];
+export const prescriptionSelectedQueryFields = ["doctorEmail", "patientEmail"];

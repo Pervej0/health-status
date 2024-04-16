@@ -70,7 +70,6 @@ export const getMyPrescriptionDB = async (
 };
 
 export const getAllPrescriptionDB = async (
-  user: TAuthUser,
   filter: Record<string, unknown>,
   options: Record<string, unknown>
 ) => {

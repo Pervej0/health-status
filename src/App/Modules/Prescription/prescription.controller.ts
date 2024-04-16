@@ -11,7 +11,7 @@ import {
 import { TAuthUser } from "../../interfaces/global";
 import { pick } from "../../../shared/pick";
 import { paginationOptionItem } from "../../../helper/paginationHelper";
-import { prescriptionSearchedFields } from "./prescription.constant";
+import { prescriptionSelectedQueryFields } from "./prescription.constant";
 
 export const createPrescription: RequestHandler = asyncCatch(
   async (req: any, res) => {
@@ -41,13 +41,9 @@ export const getMyPrescription: RequestHandler = asyncCatch(
 
 export const getAllPrescription: RequestHandler = asyncCatch(
   async (req: any, res) => {
-    const filterOptions = pick(req.query, prescriptionSearchedFields);
+    const filterOptions = pick(req.query, prescriptionSelectedQueryFields);
     const paginationOption = pick(req.query, paginationOptionItem);
-    const result = await getAllPrescriptionDB(
-      req.user,
-      filterOptions,
-      paginationOption
-    );
+    const result = await getAllPrescriptionDB(filterOptions, paginationOption);
 
     sendResponse(res, {
       statusCode: StatusCodes.OK,

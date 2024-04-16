@@ -23,7 +23,7 @@ export const getAllPatientDB = async (
       })),
     });
   }
-  //  search on specific field
+  //  filter on specific field
   if (Object.keys(filterData).length > 0) {
     andCondition.push({
       AND: Object.keys(filterData).map((key) => ({
