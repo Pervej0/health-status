@@ -3,8 +3,15 @@ import validationChecker from "../../../shared/validationChecker";
 import { prescriptionValidationSchema } from "./prescription.validationSchema";
 import auth from "../../middleware/auth";
 import { userRole } from "@prisma/client";
-import { createPrescription } from "./prescription.controller";
+import {
+  createPrescription,
+  getAllPrescription,
+  getMyPrescription,
+} from "./prescription.controller";
 const router = express.Router();
+
+router.get("/my-prescription", auth(userRole.PATIENT), getMyPrescription);
+router.get("/", auth(userRole.ADMIN, userRole.SUPER_ADMIN), getAllPrescription);
 
 router.post(
   "/create-prescription",
