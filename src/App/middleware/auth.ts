@@ -23,7 +23,6 @@ const auth = (...roles: string[]) => {
         token,
         config.ACCESS_TOKEN_SECRET as Secret
       ) as JwtPayload;
-
       if (roles.length && !roles.includes(userCredentials.role)) {
         throw new CustomError(StatusCodes.FORBIDDEN, "Forbidden To Access!");
       }
