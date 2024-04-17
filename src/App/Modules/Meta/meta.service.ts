@@ -18,6 +18,7 @@ export const getAllMetaDataDB = async (user: TAuthUser) => {
       break;
     case userRole.PATIENT:
       metaResult = await patientMeta(user);
+      break;
     default:
       throw new CustomError(StatusCodes.BAD_REQUEST, "Invalid user role!");
   }
@@ -26,7 +27,6 @@ export const getAllMetaDataDB = async (user: TAuthUser) => {
 };
 
 const superAdminMeta = async (user: TAuthUser) => {
-  console.log(user?.role);
   const totalUser = await prisma.user.count();
   const totalDoctor = await prisma.doctor.count();
   const totalAdmin = await prisma.admin.count();
@@ -60,13 +60,102 @@ const superAdminMeta = async (user: TAuthUser) => {
 };
 
 const adminMeta = async (user: TAuthUser) => {
-  console.log(user?.role);
+  const totalDoctor = await prisma.doctor.count();
+  const totalPatient = await prisma.patient.count();
+  const totalPayment = await prisma.payment.count();
+  const totalRevenue = await prisma.payment.aggregate({
+    where: {
+      status: paymentStatus.PAID,
+    },
+    _sum: { amount: true },
+  });
+  const totalAppointment = await prisma.appointment.groupBy({
+    by: ["status"],
+    _count: { status: true },
+  });
+  const groupedAppointment = totalAppointment.map((item) => ({
+    status: item.status,
+    count: item._count.status,
+  }));
+
+  return {
+    totalDoctor,
+    totalPatient,
+    totalPayment,
+    totalAppointment: groupedAppointment,
+    totalRevenue: totalRevenue._sum.amount,
+  };
 };
 
 const doctorMeta = async (user: TAuthUser) => {
-  console.log(user?.role);
+  const doctor = await prisma.doctor.findUniqueOrThrow({
+    where: { email: user?.email },
+  });
+
+  const totalPatient = await prisma.appointment.groupBy({
+    by: ["patientId"],
+    _count: { id: true },
+  });
+
+  const totalRevenue = await prisma.payment.aggregate({
+    where: {
+      status: paymentStatus.PAID,
+      appointment: {
+        doctorId: doctor.id,
+      },
+    },
+    _sum: { amount: true },
+  });
+
+  const totalReview = await prisma.review.count({
+    where: { doctorId: doctor.id },
+  });
+
+  const totalAppointment = await prisma.appointment.groupBy({
+    by: ["status"],
+    where: { doctorId: doctor.id },
+    _count: { status: true },
+  });
+  const groupedAppointment = totalAppointment.map((item) => ({
+    status: item.status,
+    count: item._count.status,
+  }));
+
+  return {
+    totalReview,
+    totalPatient: totalPatient.length,
+    totalRevenue: totalRevenue._sum.amount,
+    totalAppointment: groupedAppointment,
+  };
 };
 
 const patientMeta = async (user: TAuthUser) => {
-  console.log(user?.role);
+  const patient = await prisma.patient.findUniqueOrThrow({
+    where: { email: user?.email },
+  });
+
+  const totalPrescription = await prisma.prescription.count({
+    where: { patientId: patient.id },
+  });
+
+  const totalReview = await prisma.review.count({
+    where: { patientId: patient.id },
+  });
+
+  const totalAppointment = await prisma.appointment.groupBy({
+    by: ["status"],
+    where: { patientId: patient.id },
+    _count: { status: true },
+  });
+
+  const groupedAppointment = totalAppointment.map((item) => ({
+    status: item.status,
+    count: item._count.status,
+  }));
+
+  return {
+    totalPrescription,
+    totalReview,
+    totalAppointment: groupedAppointment,
+  };
 };

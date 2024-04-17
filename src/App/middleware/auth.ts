@@ -27,7 +27,7 @@ const auth = (...roles: string[]) => {
         throw new CustomError(StatusCodes.FORBIDDEN, "Forbidden To Access!");
       }
 
-      //   injecting user with req
+      // injecting user with req
       req.user = userCredentials;
       next();
     } catch (err) {
