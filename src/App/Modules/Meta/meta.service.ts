@@ -48,14 +48,18 @@ const superAdminMeta = async (user: TAuthUser) => {
     count: item._count.status,
   }));
 
+  const barChartAppointment = await barChartMeta();
+
   return {
     totalUser,
     totalAdmin,
     totalDoctor,
     totalPatient,
     totalPayment,
-    totalAppointment: groupedAppointment,
     totalRevenue: totalRevenue._sum.amount,
+    totalAppointment: groupedAppointment,
+    barChartAppointment,
+    pieChartAppointment: groupedAppointment,
   };
 };
 
@@ -121,11 +125,14 @@ const doctorMeta = async (user: TAuthUser) => {
     count: item._count.status,
   }));
 
+  const barChartAppointment = await barChartMeta();
+
   return {
     totalReview,
     totalPatient: totalPatient.length,
     totalRevenue: totalRevenue._sum.amount,
     totalAppointment: groupedAppointment,
+    barChartAppointment,
   };
 };
 
@@ -159,3 +166,16 @@ const patientMeta = async (user: TAuthUser) => {
     totalAppointment: groupedAppointment,
   };
 };
+
+const barChartMeta = async () => {
+  const barChart = await prisma.$queryRaw`
+    SELECT DATE_TRUNC('month', "createdAt") as month,
+    CAST(COUNT(*) AS INT) AS count
+    FROM "appointments"
+    GROUP BY month
+    ORDER BY month ASC
+  `;
+  return barChart;
+};
+
+const pieChartMeta = async () => {};

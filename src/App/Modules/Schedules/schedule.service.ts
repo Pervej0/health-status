@@ -8,6 +8,11 @@ import { TAuthUser } from "../../interfaces/global";
 import CustomError from "../../errors/CustomError";
 import { StatusCodes } from "http-status-codes";
 
+const convertToUTC = (date: Date) => {
+  const utcTime = new Date(date.getTime() + date.getTimezoneOffset() * 60000);
+  return utcTime;
+};
+
 export const createScheduleDB = async (payload: TSchedule) => {
   const { startDate, endDate, startTime, endTime } = payload;
 
@@ -38,9 +43,17 @@ export const createScheduleDB = async (payload: TSchedule) => {
     );
 
     while (startDateTime < endDateTime) {
+      // set local dateTime
+      // const schedule = {
+      //   startDateTime: startDateTime,
+      //   endDateTime: addMinutes(startDateTime, interval),
+      // };
+
+      // set utc format
+
       const schedule = {
-        startDateTime: startDateTime,
-        endDateTime: addMinutes(startDateTime, interval),
+        startDateTime: convertToUTC(startDateTime),
+        endDateTime: convertToUTC(addMinutes(startDateTime, interval)),
       };
 
       const isScheduleExist = await prisma.schedule.findFirst({
