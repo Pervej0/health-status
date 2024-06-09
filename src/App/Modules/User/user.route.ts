@@ -48,7 +48,7 @@ router.post(
 );
 router.post(
   "/create-patient",
-  auth(userRole.ADMIN, userRole.SUPER_ADMIN, userRole.PATIENT, userRole.DOCTOR),
+  // auth(userRole.ADMIN, userRole.SUPER_ADMIN, userRole.PATIENT, userRole.DOCTOR),
   fileUpload.upload.single("file"),
   (req: Request, res: Response, next: NextFunction) => {
     const data = patientValidationSchema.parse(JSON.parse(req.body.data));

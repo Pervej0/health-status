@@ -1,5 +1,4 @@
 import { Prisma, Schedule } from "@prisma/client";
-import moment from "moment";
 import { TSchedule } from "./schedule.interface";
 import { addHours, addMinutes, format } from "date-fns";
 import prisma from "../../../shared/prisma";
@@ -20,7 +19,6 @@ export const createScheduleDB = async (payload: TSchedule) => {
   const closingEndDate = new Date(endDate);
   const interval = 30;
   const scheduleData = [];
-
   while (openingStartDate <= closingEndDate) {
     const startDateTime = new Date(
       addMinutes(

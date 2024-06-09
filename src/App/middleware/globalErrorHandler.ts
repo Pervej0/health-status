@@ -9,11 +9,13 @@ const globalErrorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  let message = "Something Went Wrong!";
-  let error = err.message;
+  let statusCode = 500;
+  let message = err.message || "Something Went Wrong!";
+  let error = err;
 
   if (err instanceof ZodError) {
     message = "zod validation error occurred!";
+    statusCode = StatusCodes.FORBIDDEN;
   }
 
   if (err instanceof Prisma.PrismaClientKnownRequestError) {
@@ -23,9 +25,13 @@ const globalErrorHandler = (
     }
   } else if (err instanceof Prisma.PrismaClientValidationError) {
     message = "Validation error occurred";
+    statusCode = StatusCodes.FORBIDDEN;
+  } else if (err.message === "jwt expired") {
+    statusCode = StatusCodes.BAD_REQUEST;
   }
 
   res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+    statusCode,
     success: false,
     message: message,
     error,

@@ -42,7 +42,6 @@ export const getMe: RequestHandler = asyncCatch(async (req: any, res) => {
 export const updateProfile: RequestHandler = asyncCatch(
   async (req: any, res) => {
     const result = await updateProfileDB(req.user, req.file, req.body);
-
     sendResponse(res, {
       statusCode: StatusCodes.OK,
       message: "Profile updated successfully!",
@@ -61,7 +60,6 @@ export const createAdmin: RequestHandler = asyncCatch(async (req, res) => {
 });
 
 export const createDoctor: RequestHandler = asyncCatch(async (req, res) => {
-  console.log(req.file, req.body);
   const result = await createDoctorDB(req.file, req.body);
   sendResponse(res, {
     statusCode: StatusCodes.OK,
@@ -71,7 +69,6 @@ export const createDoctor: RequestHandler = asyncCatch(async (req, res) => {
 });
 
 export const createPatient: RequestHandler = asyncCatch(async (req, res) => {
-  console.log(req.file, req.body);
   const result = await createPatientDB(req.file, req.body);
   sendResponse(res, {
     statusCode: StatusCodes.OK,

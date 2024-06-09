@@ -13,8 +13,7 @@ import {
 import { updateDoctorValidationSchema } from "./doctor.validationSchema";
 
 const router = express.Router();
-
-router.get("/", auth(userRole.ADMIN, userRole.SUPER_ADMIN), getAllDoctor);
+auth(userRole.ADMIN, userRole.SUPER_ADMIN), router.get("/", getAllDoctor);
 router.get("/:id", auth(userRole.ADMIN, userRole.SUPER_ADMIN), getSingleDoctor);
 router.patch(
   "/:id",

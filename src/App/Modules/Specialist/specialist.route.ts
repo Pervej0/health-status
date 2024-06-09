@@ -10,7 +10,8 @@ import {
 } from "./specialist.controller";
 const router = express.Router();
 
-router.get("/", auth(userRole.ADMIN, userRole.SUPER_ADMIN), getAllSpecialists);
+auth(userRole.ADMIN, userRole.SUPER_ADMIN);
+router.get("/", getAllSpecialists);
 
 router.post(
   "/create-specialist",

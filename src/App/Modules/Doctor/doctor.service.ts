@@ -108,6 +108,7 @@ export const updateSingleDoctorDB = async (
   const doctor = await prisma.doctor.findUniqueOrThrow({
     where: { id },
   });
+
   const { doctorSpecialties, ...doctorData } = payload;
 
   await prisma.$transaction(async (tx) => {
@@ -121,19 +122,31 @@ export const updateSingleDoctorDB = async (
         doctorSpecialties: true,
       },
     });
+
     if (doctorSpecialties && doctorSpecialties.length > 0) {
       // create specialties
       const createSpecialties = doctorSpecialties.filter(
         (item: any) => !item.isDeleted
       );
-      for (let specialty of createSpecialties) {
-        await prisma.doctorSpecialties.create({
-          data: {
+
+      for (const specialty of createSpecialties) {
+        const existingSpecialty = await prisma.doctorSpecialties.findFirst({
+          where: {
             doctorId: doctor.id,
             specialtiesId: specialty.specialtiesId,
           },
         });
+
+        if (!existingSpecialty) {
+          await tx.doctorSpecialties.create({
+            data: {
+              specialtiesId: specialty.specialtiesId,
+              doctorId: doctor.id,
+            },
+          });
+        }
       }
+
       // delete specialties
       const deleteSpecialties = doctorSpecialties.filter(
         (item: any) => item.isDeleted

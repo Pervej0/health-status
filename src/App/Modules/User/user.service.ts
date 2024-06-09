@@ -175,6 +175,11 @@ export const getMeDB = async (user: JwtPayload) => {
       where: {
         email: user.email,
       },
+      include: {
+        doctorSpecialties: {
+          include: { specialties: true },
+        },
+      },
     });
   } else if (user.role === userRole.PATIENT) {
     profileInfo = await prisma.patient.findUniqueOrThrow({
@@ -207,16 +212,27 @@ export const updateProfileDB = async (
     payload.profilePhoto = clodUpload?.secure_url || "";
   }
 
+  console.log(payload, "xx");
+
   let updateProfile;
+
+  // update doctor by admin/super_admin
+  if (payload.email && user.email !== payload.email) {
+    updateProfile = await prisma.doctor.update({
+      where: { email: payload.email },
+      data: payload,
+    });
+    return updateProfile;
+  }
 
   if (user.role === userRole.SUPER_ADMIN) {
     updateProfile = await prisma.admin.update({
-      where: { email: user.email },
+      where: { email: user.email || payload.email },
       data: payload,
     });
   } else if (user.role === userRole.ADMIN) {
     updateProfile = await prisma.admin.update({
-      where: { email: user.email },
+      where: { email: user.email || payload.email },
       data: payload,
     });
   } else if (user.role === userRole.DOCTOR) {
@@ -235,7 +251,7 @@ export const updateProfileDB = async (
     });
   }
 
-  return updateProfile;
+  return { ...updateProfile };
 };
 
 export const changeUserStatusDB = async (id: string, status: userRole) => {

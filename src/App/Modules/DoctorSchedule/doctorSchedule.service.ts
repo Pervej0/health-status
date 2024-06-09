@@ -94,6 +94,9 @@ export const getMyScheduleDB = async (
     where: { ...whereCondition, doctor: { email: user?.email } },
     skip,
     take: limit,
+    include: {
+      schedule: true,
+    },
     orderBy: { [sortBy as string]: sortOrder },
   });
 

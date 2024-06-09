@@ -24,6 +24,7 @@ export const getAllSpecialistsDB = async () => {
 };
 
 export const deleteSpecialistDB = async (specialistId: string) => {
+  await prisma.specialties.findUniqueOrThrow({ where: { id: specialistId } });
   const deleted = await prisma.specialties.delete({
     where: { id: specialistId },
   });
