@@ -1,10 +1,4 @@
-import {
-  Admin,
-  Doctor,
-  DoctorSpecialties,
-  Prisma,
-  userStatus,
-} from "@prisma/client";
+import { Doctor, Prisma, userStatus } from "@prisma/client";
 import paginationCalculator from "../../../helper/paginationHelper";
 import prisma from "../../../shared/prisma";
 import { DoctorSearchedFields } from "./doctor.constant";
@@ -110,7 +104,6 @@ export const updateSingleDoctorDB = async (
   });
 
   const { doctorSpecialties, ...doctorData } = payload;
-
   await prisma.$transaction(async (tx) => {
     // update doctor
     await tx.doctor.update({

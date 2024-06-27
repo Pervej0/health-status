@@ -10,7 +10,6 @@ export const getAllAdminDB = async (
   const { searchTerm, ...filterData } = query;
   const { page, skip, limit, sortBy, sortOrder } =
     paginationCalculator(options);
-  console.log(searchTerm, filterData);
   const andCondition: Prisma.AdminWhereInput[] = [];
   if (searchTerm) {
     andCondition.push({
