@@ -9,26 +9,9 @@ const globalErrorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  let statusCode = 500;
+  let statusCode = StatusCodes.BAD_REQUEST;
   let message = err.message || "Something Went Wrong!";
   let error = err;
-
-  if (err instanceof ZodError) {
-    message = "zod validation error occurred!";
-    statusCode = StatusCodes.FORBIDDEN;
-  }
-
-  if (err instanceof Prisma.PrismaClientKnownRequestError) {
-    if (err.code === "P2002") {
-      message =
-        "There is a unique constraint violation, a new user cannot be created with this email";
-    }
-  } else if (err instanceof Prisma.PrismaClientValidationError) {
-    message = "Validation error occurred";
-    statusCode = StatusCodes.FORBIDDEN;
-  } else if (err.message === "jwt expired") {
-    statusCode = StatusCodes.BAD_REQUEST;
-  }
 
   res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
     statusCode,

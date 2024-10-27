@@ -12,7 +12,7 @@ const router = express.Router();
 
 router.post("/login", loginUser);
 router.get("/refresh-token", getRefreshToken);
-router.get(
+router.put(
   "/change-password",
   auth(userRole.ADMIN, userRole.DOCTOR, userRole.PATIENT, userRole.SUPER_ADMIN),
   changePassword
