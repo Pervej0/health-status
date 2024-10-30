@@ -128,13 +128,13 @@ export const forgetPasswordDB = async (req: Request, res: Response) => {
     "5m"
   );
 
-  const resetPassLink = `${config.LOCAL_URL}?userId=${getUser.id}&&token=${passwordResetToken}`;
+  const resetPassLink = `${config.LOCAL_URL}/reset-password?userId=${getUser.id}&&token=${passwordResetToken}`;
 
   const info = await emailSender.sendMail({
     from: '"PH Health Care 👻" <mdparvez222khan@gmail.com>', // sender address
     to: getUser.email, // list of receivers
     subject: "Hello ✔", // Subject line
-    text: "Hello User, Did you just forget your password?", // plain text body
+    text: "Hello Patient, Did you just forget your password?", // plain text body
     html: `
     <div>
       <p>Dear User,</p>

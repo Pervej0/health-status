@@ -23,7 +23,7 @@ router.put(
   // auth(userRole.ADMIN, userRole.DOCTOR, userRole.PATIENT, userRole.SUPER_ADMIN),
   forgetPasswordDB
 );
-router.get(
+router.put(
   "/reset-password",
   auth(userRole.ADMIN, userRole.DOCTOR, userRole.PATIENT, userRole.SUPER_ADMIN),
   resetPassword
