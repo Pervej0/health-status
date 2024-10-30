@@ -18,9 +18,9 @@ router.put(
   changePassword
 );
 
-router.get(
-  "/forget-password",
-  auth(userRole.ADMIN, userRole.DOCTOR, userRole.PATIENT, userRole.SUPER_ADMIN),
+router.put(
+  "/forgot-password",
+  // auth(userRole.ADMIN, userRole.DOCTOR, userRole.PATIENT, userRole.SUPER_ADMIN),
   forgetPasswordDB
 );
 router.get(

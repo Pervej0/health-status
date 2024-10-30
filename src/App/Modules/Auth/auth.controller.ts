@@ -4,7 +4,6 @@ import sendResponse from "../../../shared/sendResponse";
 import { StatusCodes } from "http-status-codes";
 import {
   changePasswordDB,
-  forgetPasswordDB,
   getRefreshTokenDB,
   loginUserDB,
   resetPasswordDB,

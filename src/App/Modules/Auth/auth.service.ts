@@ -9,6 +9,8 @@ import CustomError from "../../errors/CustomError";
 import { StatusCodes } from "http-status-codes";
 import transporter from "nodemailer";
 import emailSender from "./emailSender";
+import { Request, Response } from "express";
+import sendResponse from "../../../shared/sendResponse";
 
 export const loginUserDB = async (payload: {
   email: string;
@@ -110,14 +112,16 @@ export const changePasswordDB = async (
   return "updatePassword";
 };
 
-export const forgetPasswordDB = async (user: JwtPayload) => {
+export const forgetPasswordDB = async (req: Request, res: Response) => {
+  const userEmail = req.body;
   const getUser = await prisma.user.findUniqueOrThrow({
     where: {
-      email: user.email,
+      email: userEmail.email,
       status: userStatus.ACTIVE,
     },
   });
   const tokenPayload = { email: getUser.email, role: getUser.role };
+
   const passwordResetToken = generateToken(
     tokenPayload,
     config.ACCESS_TOKEN_SECRET as Secret,
@@ -127,10 +131,10 @@ export const forgetPasswordDB = async (user: JwtPayload) => {
   const resetPassLink = `${config.LOCAL_URL}?userId=${getUser.id}&&token=${passwordResetToken}`;
 
   const info = await emailSender.sendMail({
-    from: '"Maddison Foo Koch 👻" <mdparvez222khan@gmail.com>', // sender address
+    from: '"PH Health Care 👻" <mdparvez222khan@gmail.com>', // sender address
     to: getUser.email, // list of receivers
     subject: "Hello ✔", // Subject line
-    text: "Hello world?", // plain text body
+    text: "Hello User, Did you just forget your password?", // plain text body
     html: `
     <div>
       <p>Dear User,</p>
@@ -146,6 +150,12 @@ export const forgetPasswordDB = async (user: JwtPayload) => {
   });
 
   console.log("Message sent: %s", info.messageId);
+
+  sendResponse(res, {
+    statusCode: StatusCodes.OK,
+    message: "Email sent successfully to reset password!",
+    data: "",
+  });
 };
 
 export const resetPasswordDB = async (token: string, payload: any) => {
