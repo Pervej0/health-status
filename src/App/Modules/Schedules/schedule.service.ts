@@ -143,6 +143,10 @@ export const getAllSchedulesDB = async (
             createdAt: "desc",
           },
   });
+  console.log(result);
+  if (!result) {
+    throw new CustomError(StatusCodes.NOT_FOUND, "No Schedule Found!");
+  }
 
   const count = await prisma.schedule.count({
     where: { ...whereCondition, id: { notIn: DoctorSchedulesId } },
@@ -168,7 +172,7 @@ export const getSingleScheduleDB = async (scheduleId: string) => {
 
 export const deleteScheduleDB = async (scheduleId: string) => {
   const schedule = await prisma.schedule.findFirst({
-    where: { id: scheduleId, doctorSchedules: { some: { scheduleId } } },
+    where: { id: scheduleId, DoctorSchedules: { some: { scheduleId } } },
   });
 
   if (schedule) {

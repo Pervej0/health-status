@@ -182,8 +182,8 @@ model Schedule {
   endDateTime     DateTime
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
-  doctorSchedules DoctorSchedules[]
-  appointment     Appointment?
+  DoctorSchedules DoctorSchedules[]
+  Appointment     Appointment?
 
   @@map("schedules")
 }
@@ -193,7 +193,7 @@ model DoctorSchedules {
   doctor   Doctor @relation(fields: [doctorId], references: [id])
 
   scheduleId String
-  schedule   Schedule @relation(fields: [scheduleId], references: [id])
+  schedule   Schedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
 
   isBooked Boolean @default(false)
 
