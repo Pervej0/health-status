@@ -19,7 +19,6 @@ export const createSpecialistDB = async (file: TFile, payload: TSpecialist) => {
 
 export const getAllSpecialistsDB = async () => {
   const specialists = await prisma.specialties.findMany();
-
   return specialists;
 };
 

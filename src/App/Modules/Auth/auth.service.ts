@@ -16,6 +16,7 @@ export const loginUserDB = async (payload: {
   email: string;
   password: string;
 }) => {
+  console.log(payload, "ppppp");
   const isUserExist = await prisma.user.findUniqueOrThrow({
     where: {
       email: payload.email,

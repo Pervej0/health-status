@@ -89,6 +89,13 @@ export const getSingleDoctorDB = async (id: string) => {
     where: {
       id,
     },
+    include: {
+      doctorSpecialties: {
+        include: { specialties: true },
+      },
+      doctorSchedules: true,
+      review: true,
+    },
   });
 
   return result;

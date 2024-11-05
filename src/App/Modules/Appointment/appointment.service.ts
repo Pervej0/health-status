@@ -20,6 +20,7 @@ export const createAppointmentDB = async (
     where: { email: user?.email },
   });
 
+  console.log(payload);
   const doctor = await prisma.doctor.findFirstOrThrow({
     where: { id: payload.doctorId },
   });
@@ -39,6 +40,8 @@ export const createAppointmentDB = async (
   payload.scheduleId = doctorSchedule.scheduleId;
   payload.doctorId = doctor.id;
   payload.videoCallingId = videoCallingId;
+
+  console.log(videoCallingId, "pp");
 
   const result = await prisma.$transaction(async (tx) => {
     const createAppointment = await tx.appointment.create({

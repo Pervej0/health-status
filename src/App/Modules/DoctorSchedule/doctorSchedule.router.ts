@@ -20,7 +20,7 @@ router.post(
 router.get("/my-schedules", auth(userRole.DOCTOR), getMySchedule);
 router.get(
   "/",
-  auth(userRole.ADMIN, userRole.SUPER_ADMIN),
+  auth(userRole.ADMIN, userRole.SUPER_ADMIN, userRole.PATIENT, userRole.DOCTOR),
   getAllDoctorSchedule
 );
 router.delete("/:scheduleId", auth(userRole.DOCTOR), deleteDoctorSchedule);

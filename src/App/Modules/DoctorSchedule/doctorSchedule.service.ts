@@ -159,6 +159,7 @@ export const getAllDoctorScheduleDB = async (
     searchTerm,
     ...filterData
   } = query;
+
   const { page, skip, limit, sortBy, sortOrder } =
     paginationCalculator(options);
   const andCondition: object[] = [];
@@ -222,6 +223,9 @@ export const getAllDoctorScheduleDB = async (
 
   const result = await prisma.doctorSchedules.findMany({
     where: whereCondition,
+    include: {
+      schedule: true,
+    },
     skip,
     take: limit,
     orderBy: { [sortBy as string]: sortOrder },

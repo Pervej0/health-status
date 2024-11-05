@@ -1,9 +1,7 @@
 import axios from "axios";
 import prisma from "../../../shared/prisma";
-import config from "../../config";
 import { paymentInit, validPayment } from "../SSL/ssl.service";
 import CustomError from "../../errors/CustomError";
-import { StatusCodes } from "http-status-codes";
 import { paymentStatus } from "@prisma/client";
 
 export const paymentInitiateDB = async (appointmentId: string) => {
