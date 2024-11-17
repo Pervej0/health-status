@@ -212,8 +212,6 @@ export const updateProfileDB = async (
     payload.profilePhoto = clodUpload?.secure_url || "";
   }
 
-  console.log(payload, "xx");
-
   let updateProfile;
 
   // update doctor by admin/super_admin

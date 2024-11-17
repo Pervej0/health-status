@@ -41,7 +41,7 @@ export const createAppointmentDB = async (
   payload.doctorId = doctor.id;
   payload.videoCallingId = videoCallingId;
 
-  console.log(videoCallingId, "pp");
+  console.log(videoCallingId, "video calling id");
 
   const result = await prisma.$transaction(async (tx) => {
     const createAppointment = await tx.appointment.create({

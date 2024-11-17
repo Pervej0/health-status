@@ -143,7 +143,7 @@ export const getAllSchedulesDB = async (
             createdAt: "desc",
           },
   });
-  console.log(result);
+
   if (!result) {
     throw new CustomError(StatusCodes.NOT_FOUND, "No Schedule Found!");
   }
